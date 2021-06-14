@@ -7,8 +7,8 @@ public class Player_Controler : MonoBehaviour
     bool isDeath = false;
 
     //Sprite and animations
-    SpriteRenderer sprite;
-    Animator playerAnimator;
+    [SerializeField]SpriteRenderer sprite;
+    [SerializeField]Animator playerAnimator;
 
     //Movement
     float horizontalInput;
@@ -18,24 +18,23 @@ public class Player_Controler : MonoBehaviour
     Rigidbody2D rb;
     bool isGrounded;
     bool isPreparingToJump = false;
+    int dir;
 
     //Stats
     [SerializeField]int healthPoints = 3;
     int money = 0;
     int damage = 1;
-    float attackSpeed = 1; //attacksPerSec
 
     //Attack
     [SerializeField]Transform attackPosition;
     [SerializeField] float attackRange = 0.5f;
     bool canAttack = true;
+    bool isAttacking = false;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        sprite = GetComponent<SpriteRenderer>();
-        playerAnimator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -54,12 +53,11 @@ public class Player_Controler : MonoBehaviour
             playerAnimator.SetTrigger("isDead");
         }
 
-        Debug.Log(rb.velocity.y);
     }
 
     void Movement()
     {
-        if (isPreparingToJump == false)
+        if (isPreparingToJump == false )
         {
             horizontalInput = Input.GetAxis("Horizontal");
             Vector2 direction = new Vector2(horizontalInput, 0);
@@ -68,15 +66,19 @@ public class Player_Controler : MonoBehaviour
             {
                 transform.Translate(direction * speed * Time.deltaTime);
             }
-            if (horizontalInput < 0)
+            if (horizontalInput < 0 && isAttacking == false)
             {
                 sprite.flipX = true;
-                attackPosition.localPosition =new Vector2(-0.082f,0);
+                playerAnimator.SetBool("isFlipped", true);
+                attackPosition.localPosition =new Vector2(-0.135f, 0);
+                dir = -1;
             }
-            else
+            else if(horizontalInput>0 && isAttacking == false)
             {
+                playerAnimator.SetBool("isFlipped", false);
                 sprite.flipX = false;
-                attackPosition.localPosition = new Vector2(0.082f, 0);
+                attackPosition.localPosition = new Vector2(0.135f, 0);
+                dir = 1;
             }
             
         }
@@ -134,15 +136,15 @@ public class Player_Controler : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E) && canAttack==true)
         {
-            
+            isAttacking = true;
            Collider2D[] enemiesArrey = Physics2D.OverlapCircleAll(attackPosition.position, attackRange,LayerMask.GetMask("Enemy"));
             playerAnimator.SetTrigger("isAttacking");
             canAttack = false;
             StartCoroutine(attackCooldown());
-
+            
             foreach(Collider2D enemy in enemiesArrey)
             {
-                enemy.gameObject.GetComponent<Enemy>().TakeDamage(damage);
+                enemy.gameObject.GetComponent<Enemy>().TakeDamage(damage,dir);
             }
 
         }
@@ -187,8 +189,12 @@ public class Player_Controler : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
-            rb.velocity = new Vector2(rb.velocity.x, 5);
+            if (collision.gameObject.GetComponent<Enemy>().CheckEnemyType() == true)
+            {
+                collision.gameObject.GetComponent<Enemy>().CrushDamage(damage);
+                rb.velocity = new Vector2(rb.velocity.x, 7);
+            }
+            
         }
     }
 
@@ -202,11 +208,13 @@ public class Player_Controler : MonoBehaviour
             Vector2 dir = transform.position - collision.transform.position;
             if (dir.x > 0)
             {
-                rb.velocity = new Vector2(5, 0);
+                // rb.velocity = new Vector2(5, rb.velocity.y);
+                rb.AddForce(new Vector2(250, 0));
             }
             else
             {
-                rb.velocity = new Vector2(-5, 0);
+                //rb.velocity = new Vector2(-5, rb.velocity.y);
+                rb.AddForce(new Vector2(-250, 0));
             }
         }
 
@@ -217,8 +225,9 @@ public class Player_Controler : MonoBehaviour
 
     IEnumerator attackCooldown()
     {
-        yield return new WaitForSeconds(1 / attackSpeed);
+        yield return new WaitForSeconds(0.517f);
         canAttack = true;
+        isAttacking = false;
         playerAnimator.ResetTrigger("isAttacking");
     }
 }
