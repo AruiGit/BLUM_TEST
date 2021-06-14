@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour
     float finishDistance = 0.5f;
     float movementStep = 2;
 
-    int healthPoints = 3;
+    int healthPoints = 2;
     void Start()
     {
         
@@ -19,7 +19,6 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         Movement();
-        Debug.Log(currentPatrolPoint);
     }
 
     void Movement()

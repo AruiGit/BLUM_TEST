@@ -13,7 +13,8 @@ public class Player_Controler : MonoBehaviour
     //Movement
     float horizontalInput;
     int speed = 5;
-    float jumpHight = 7;
+    float maxJumpHight = 10;
+    float jumpHight;
     Rigidbody2D rb;
     bool isGrounded;
     bool isPreparingToJump = false;
@@ -47,6 +48,11 @@ public class Player_Controler : MonoBehaviour
             Attack();
         }
 
+        if (healthPoints <= 0)
+        {
+            isDeath = true;
+            playerAnimator.SetTrigger("isDead");
+        }
     }
 
     void Movement()
@@ -83,16 +89,23 @@ public class Player_Controler : MonoBehaviour
         {
             if (Input.GetKeyUp(KeyCode.Space))
             {
+                Debug.Log(jumpHight);
+                
                 rb.velocity = new Vector2(rb.velocity.x, jumpHight);
                 playerAnimator.ResetTrigger("prepToJump");
                 playerAnimator.SetBool("isJumping", true);
                 isGrounded = false;
+                jumpHight = 0;
             }
 
             if (Input.GetKey(KeyCode.Space))
             {
+               
+                jumpHight += 10 * Time.deltaTime;
+                jumpHight = Mathf.Clamp(jumpHight, 3f, maxJumpHight);
                 playerAnimator.SetTrigger("prepToJump");
                 isPreparingToJump = true;
+                
             }
             else
             {
@@ -156,10 +169,7 @@ public class Player_Controler : MonoBehaviour
     public void ChangeHealth(int value)
     {
         healthPoints += value;
-        if (healthPoints <= 0)
-        {
-            isDeath = true;
-        }
+       
     }
     public int GetHealth()
     {
