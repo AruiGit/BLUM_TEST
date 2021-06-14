@@ -116,6 +116,10 @@ public class Enemy : MonoBehaviour
         {
             Instantiate(coinPrefab, transform.position, Quaternion.identity);
         }
+        else if (dropID >= 50)
+        {
+            Instantiate(hearthPrefab, transform.position, Quaternion.identity);
+        }
     }
 
     IEnumerator DeathTimer()

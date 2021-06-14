@@ -5,16 +5,13 @@ using UnityEngine;
 public class Collectible : MonoBehaviour
 {
     [SerializeField]int value = 1;
-   
-    void Start()
-    {
-        
-    }
+    Animator animator;
+    CircleCollider2D collider;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        animator = GetComponent<Animator>();
+        collider = GetComponent<CircleCollider2D>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -28,8 +25,21 @@ public class Collectible : MonoBehaviour
                 Destroy(this.gameObject);
             }
 
+            if (gameObject.CompareTag("Heart"))
+            {
+                collision.GetComponent<Player_Controler>().ChangeHealth(value);
+                collider.enabled = false;
+                animator.SetTrigger("pickedHeart");
+                StartCoroutine(AnimationTime());
+            }
 
             
         }
+    }
+
+    IEnumerator AnimationTime()
+    {
+        yield return new WaitForSeconds(0.517f);
+        Destroy(this.gameObject);
     }
 }

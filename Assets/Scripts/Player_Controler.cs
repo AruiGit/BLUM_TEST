@@ -22,6 +22,7 @@ public class Player_Controler : MonoBehaviour
 
     //Stats
     [SerializeField]int healthPoints = 3;
+    int maxHealthPoints;
     int money = 0;
     int damage = 1;
 
@@ -36,6 +37,7 @@ public class Player_Controler : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        maxHealthPoints = healthPoints;
     }
 
     // Update is called once per frame
@@ -179,6 +181,10 @@ public class Player_Controler : MonoBehaviour
     public void ChangeHealth(int value)
     {
         healthPoints += value;
+        if (healthPoints > maxHealthPoints)
+        {
+            healthPoints = maxHealthPoints;
+        }
        
     }
     public int GetHealth()

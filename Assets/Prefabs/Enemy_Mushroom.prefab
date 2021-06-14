@@ -149,6 +149,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   isShroomType: 1
+  healthPoints: 2
+  coinPrefab: {fileID: 3786742864276722466, guid: 7675ce4ec8da24044b0ef8aad577f77c, type: 3}
+  hearthPrefab: {fileID: 8462051259193414479, guid: 15ec00a98e03b034fbc2a3e4c57c21c1, type: 3}
 --- !u!95 &2255380911328751157
 Animator:
   serializedVersion: 3
