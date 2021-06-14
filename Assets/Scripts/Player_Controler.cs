@@ -30,6 +30,7 @@ public class Player_Controler : MonoBehaviour
     [SerializeField] float attackRange = 0.5f;
     bool canAttack = true;
     bool isAttacking = false;
+    bool damageDealt=false;
 
     // Start is called before the first frame update
     void Start()
@@ -144,7 +145,13 @@ public class Player_Controler : MonoBehaviour
             
             foreach(Collider2D enemy in enemiesArrey)
             {
-                enemy.gameObject.GetComponent<Enemy>().TakeDamage(damage,dir);
+                if (damageDealt == false)
+                {
+                    damageDealt = true;
+                    enemy.gameObject.GetComponent<Enemy>().TakeDamage(damage, dir);
+                    Debug.Log(enemy.gameObject.name);
+                }
+
             }
 
         }
@@ -179,6 +186,14 @@ public class Player_Controler : MonoBehaviour
         return healthPoints;
     }
 
+    public void TakeDamage(int value, int direction)
+    {
+        ChangeHealth(-value);
+        rb.AddForce(new Vector2(125 * direction, 0));
+        
+
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -194,7 +209,11 @@ public class Player_Controler : MonoBehaviour
                 collision.gameObject.GetComponent<Enemy>().CrushDamage(damage);
                 rb.velocity = new Vector2(rb.velocity.x, 7);
             }
-            
+            else
+            {
+                rb.velocity = new Vector2(rb.velocity.x, 7);
+                ChangeHealth(-1);
+            }
         }
     }
 
@@ -228,6 +247,7 @@ public class Player_Controler : MonoBehaviour
         yield return new WaitForSeconds(0.517f);
         canAttack = true;
         isAttacking = false;
+        damageDealt = false;
         playerAnimator.ResetTrigger("isAttacking");
     }
 }

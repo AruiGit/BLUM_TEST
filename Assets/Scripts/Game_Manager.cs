@@ -57,7 +57,7 @@ public class Game_Manager : MonoBehaviour
 
             healthBars[0].sprite = fullHeart;
         }
-        if (playerHealth == 0)
+        if (playerHealth <= 0)
         {
             foreach (Image healthBar in healthBars)
             {

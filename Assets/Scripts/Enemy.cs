@@ -11,10 +11,15 @@ public class Enemy : MonoBehaviour
     [SerializeField] bool isShroomType = true;
     Animator enemyAnimator;
     Rigidbody2D rb;
+    bool isFlipped;
+    bool canMove = true;
 
     SpriteRenderer sprite;
 
-    int healthPoints = 2;
+    [SerializeField]int healthPoints = 2;
+
+    //Drops
+    [SerializeField]GameObject coinPrefab,hearthPrefab;
     void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
@@ -37,16 +42,18 @@ public class Enemy : MonoBehaviour
     void Movement()
     {
 
-        if (patrolPoints != null)
+        if (patrolPoints != null && canMove == true)
         {
 
             if(transform.position.x- patrolPoints[currentPatrolPoint].position.x > 0)
             {
                 sprite.flipX = true;
+                isFlipped = true;
             }
             else
             {
                 sprite.flipX = false;
+                isFlipped = false;
             }
             transform.position = Vector2.MoveTowards(transform.position, patrolPoints[currentPatrolPoint].position, movementStep*Time.deltaTime);
 
@@ -67,7 +74,9 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int value, int direction)
     {
         healthPoints -= value;
-        rb.AddForce(new Vector2(125 * direction, 0));
+        rb.AddForce(new Vector2(250 * direction, 0));
+        enemyAnimator.SetTrigger("isHit");
+
         
     }
 
@@ -85,9 +94,34 @@ public class Enemy : MonoBehaviour
         return isShroomType;
     }
 
+    public bool CheckIfFlipped()
+    {
+        return isFlipped;
+    }
+
+    public void Flip(bool value)
+    {
+        sprite.flipX = value;
+    }
+
+    public void StopStartMovement(bool value)
+    {
+        canMove = value;
+    }
+
+    void Drop()
+    {
+        int dropID = Random.Range(0, 100);
+        if (dropID < 50)
+        {
+            Instantiate(coinPrefab, transform.position, Quaternion.identity);
+        }
+    }
+
     IEnumerator DeathTimer()
     {
         yield return new WaitForSeconds(0.5f);
+        Drop();
         Destroy(gameObject);
     }
 }
