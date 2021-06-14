@@ -53,6 +53,8 @@ public class Player_Controler : MonoBehaviour
             isDeath = true;
             playerAnimator.SetTrigger("isDead");
         }
+
+        Debug.Log(rb.velocity.y);
     }
 
     void Movement()
@@ -89,7 +91,6 @@ public class Player_Controler : MonoBehaviour
         {
             if (Input.GetKeyUp(KeyCode.Space))
             {
-                Debug.Log(jumpHight);
                 
                 rb.velocity = new Vector2(rb.velocity.x, jumpHight);
                 playerAnimator.ResetTrigger("prepToJump");
@@ -176,26 +177,43 @@ public class Player_Controler : MonoBehaviour
         return healthPoints;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
+            Debug.Log("Dotykam ziemi triggerem");
             isGrounded = true;
         }
+
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
+            rb.velocity = new Vector2(rb.velocity.x, 5);
+        }
+    }
+
+    
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
         if (collision.gameObject.CompareTag("Enemy"))
         {
             ChangeHealth(-1);
             Vector2 dir = transform.position - collision.transform.position;
             if (dir.x > 0)
             {
-                rb.velocity = new Vector2(5, -rb.velocity.y*10);
+                rb.velocity = new Vector2(5, 0);
             }
             else
             {
-                rb.velocity = new Vector2(-5, -rb.velocity.y*10);
+                rb.velocity = new Vector2(-5, 0);
             }
         }
+
     }
+
+    
+    
 
     IEnumerator attackCooldown()
     {
