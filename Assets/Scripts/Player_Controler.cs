@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player_Controler : MonoBehaviour
 {
+    bool isDeath = false;
+
     //Sprite and animations
     SpriteRenderer sprite;
     Animator playerAnimator;
@@ -38,9 +40,13 @@ public class Player_Controler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Movement();
-        Jump();
-        Attack();
+        if (isDeath == false)
+        {
+            Movement();
+            Jump();
+            Attack();
+        }
+
     }
 
     void Movement()
@@ -57,10 +63,12 @@ public class Player_Controler : MonoBehaviour
             if (horizontalInput < 0)
             {
                 sprite.flipX = true;
+                attackPosition.localPosition =new Vector2(-0.082f,0);
             }
             else
             {
                 sprite.flipX = false;
+                attackPosition.localPosition = new Vector2(0.082f, 0);
             }
             
         }
@@ -113,10 +121,15 @@ public class Player_Controler : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && canAttack==true)
         {
             
-           Collider2D[] enemiesArrey = Physics2D.OverlapCircleAll(attackPosition.position, attackRange);
+           Collider2D[] enemiesArrey = Physics2D.OverlapCircleAll(attackPosition.position, attackRange,LayerMask.GetMask("Enemy"));
             playerAnimator.SetTrigger("isAttacking");
             canAttack = false;
             StartCoroutine(attackCooldown());
+
+            foreach(Collider2D enemy in enemiesArrey)
+            {
+                enemy.gameObject.GetComponent<Enemy>().TakeDamage(damage);
+            }
 
         }
     }
@@ -143,6 +156,10 @@ public class Player_Controler : MonoBehaviour
     public void ChangeHealth(int value)
     {
         healthPoints += value;
+        if (healthPoints <= 0)
+        {
+            isDeath = true;
+        }
     }
     public int GetHealth()
     {
@@ -154,6 +171,19 @@ public class Player_Controler : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+        }
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            ChangeHealth(-1);
+            Vector2 dir = transform.position - collision.transform.position;
+            if (dir.x > 0)
+            {
+                rb.velocity = new Vector2(5, -rb.velocity.y*10);
+            }
+            else
+            {
+                rb.velocity = new Vector2(-5, -rb.velocity.y*10);
+            }
         }
     }
 
