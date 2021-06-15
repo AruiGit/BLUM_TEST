@@ -28,7 +28,7 @@ public class Collectible : MonoBehaviour
                 isTaken = true;
                 collision.GetComponent<Player_Controler>().AddCoints(value);
                 
-                StartCoroutine(AnimationTime());
+                StartCoroutine(AnimationTime(0.517f));
             }
 
             if (gameObject.CompareTag("Heart") && isTaken == false)
@@ -37,16 +37,16 @@ public class Collectible : MonoBehaviour
                 collision.GetComponent<Player_Controler>().ChangeHealth(value);
                 collider.enabled = false;
                 animator.SetTrigger("pickedHeart");
-                StartCoroutine(AnimationTime());
+                StartCoroutine(AnimationTime(0.2f));
             }
 
             
         }
     }
 
-    IEnumerator AnimationTime()
+    IEnumerator AnimationTime(float value)
     {
-        yield return new WaitForSeconds(0.517f);
+        yield return new WaitForSeconds(value);
         Destroy(this.gameObject);
     }
 }

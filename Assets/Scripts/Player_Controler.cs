@@ -38,6 +38,8 @@ public class Player_Controler : MonoBehaviour
     bool canTakeDamage = true;
     bool isColliding = false;
 
+    //Envo
+    bool haveSecretKey = false;
 
     void Start()
     {
@@ -260,6 +262,10 @@ public class Player_Controler : MonoBehaviour
         {
             isColliding = false;
         }
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
@@ -290,8 +296,24 @@ public class Player_Controler : MonoBehaviour
 
     }
 
+    public void ChangeMaxHealth(int value)
+    {
+        maxHealthPoints += value;
+    }
+    public int GetMaxHealth()
+    {
+        return maxHealthPoints;
+    }
     
-    
+    public void ChangeSecretKey()
+    {
+        haveSecretKey = !haveSecretKey;
+    }
+    public void ChangeDamage(int value)
+    {
+        damage += value;
+    }
+
     IEnumerator TakeDamage()
     {
         yield return new WaitForSeconds(0.5f);

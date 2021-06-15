@@ -6,18 +6,26 @@ using UnityEngine.UI;
 public class Game_Manager : MonoBehaviour
 {
 
+
+    //Player UI
     [SerializeField] Text cointText;
     [SerializeField] Image[] healthBars;
     [SerializeField] Sprite fullHeart;
     [SerializeField] Sprite emptyHeart;
+    bool additionalLifeIsActive = false;
 
     Player_Controler player;
+
+
+    //Shop
+    [SerializeField]GameObject shop;
 
 
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        shop.active = false;
     }
 
     // Update is called once per frame
@@ -34,18 +42,36 @@ public class Game_Manager : MonoBehaviour
 
     void HearthUiUpdate()
     {
+        if (player.GetMaxHealth() == 4)
+        {
+            additionalLifeIsActive = true;
+            healthBars[3].enabled = true;
+        }
+        else
+        {
+            healthBars[3].enabled = false;
+        }
         int playerHealth = player.GetHealth();
 
-        if (playerHealth == 3)
+        if (playerHealth == 4)
         {
-            foreach(Image healthBar in healthBars)
+            foreach (Image healthBar in healthBars)
             {
                 healthBar.sprite = fullHeart;
             }
         }
+        if (playerHealth == 3)
+        {
+            healthBars[3].sprite = emptyHeart;
+
+            healthBars[2].sprite = fullHeart;
+            healthBars[1].sprite = fullHeart;
+            healthBars[0].sprite = fullHeart;
+        }
         if (playerHealth == 2)
         {
             healthBars[2].sprite = emptyHeart;
+            healthBars[3].sprite = emptyHeart;
 
             healthBars[1].sprite = fullHeart;
             healthBars[0].sprite = fullHeart;
@@ -54,6 +80,7 @@ public class Game_Manager : MonoBehaviour
         {
             healthBars[2].sprite = emptyHeart;
             healthBars[1].sprite = emptyHeart;
+            healthBars[3].sprite = emptyHeart;
 
             healthBars[0].sprite = fullHeart;
         }
@@ -64,5 +91,15 @@ public class Game_Manager : MonoBehaviour
                 healthBar.sprite = emptyHeart;
             }
         }
+    }
+
+    public void OpenShop()
+    {
+        shop.active = true;
+    }
+
+    public void CloseShop()
+    {
+        shop.active = false;
     }
 }
