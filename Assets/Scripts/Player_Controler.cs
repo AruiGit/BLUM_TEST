@@ -32,6 +32,7 @@ public class Player_Controler : MonoBehaviour
     bool canAttack = true;
     bool isAttacking = false;
     bool damageDealt = false;
+    AudioSource attackSound;
 
     //TakingDamage
     bool canTakeDamage = true;
@@ -42,6 +43,7 @@ public class Player_Controler : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         maxHealthPoints = healthPoints;
+        attackSound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -143,6 +145,7 @@ public class Player_Controler : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E) && canAttack==true)
         {
+            attackSound.Play();
             isAttacking = true;
            Collider2D[] enemiesArrey = Physics2D.OverlapCircleAll(attackPosition.position, attackRange,LayerMask.GetMask("Enemy"));
             playerAnimator.SetTrigger("isAttacking");

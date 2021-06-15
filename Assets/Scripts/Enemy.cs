@@ -15,6 +15,9 @@ public class Enemy : MonoBehaviour
     bool canMove = true;
     bool canTakeDamage = true;
 
+    bool isPlaying = false;
+    AudioSource dyingSound;
+
     SpriteRenderer sprite;
 
     [SerializeField]int healthPoints = 2;
@@ -26,6 +29,7 @@ public class Enemy : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
         enemyAnimator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        dyingSound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -34,6 +38,12 @@ public class Enemy : MonoBehaviour
         Movement();
         if (healthPoints <= 0)
         {
+            if (isPlaying == false)
+            {
+                isPlaying = true;
+                dyingSound.Play();
+            }
+            
             enemyAnimator.SetTrigger("isDead");
             StartCoroutine(DeathTimer());
             
