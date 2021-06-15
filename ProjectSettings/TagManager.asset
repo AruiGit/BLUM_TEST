@@ -9,6 +9,8 @@ TagManager:
   - Enemy
   - Wall
   - Heart
+  - Spike
+  - Doors
   layers:
   - Default
   - TransparentFX

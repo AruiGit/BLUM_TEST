@@ -2118,3 +2118,26 @@ Received Import Request.
 Start importing Assets/Scripts/Doors.cs using Guid(db2377ffd88544e42a61ba63375bc8a0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1f4d300842f0c1707e9cc13771258416') in 0.009850 seconds
   Import took 0.012965 seconds .
 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.001284 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.84 ms, found 1 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.989 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.40 ms, found 1 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1789 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 89.9 MB.
+System memory in use after: 89.9 MB.
+
+Unloading 12 unused Assets to reduce memory usage. Loaded Objects now: 2469.
+Total: 2.203900 ms (FindLiveObjects: 0.343900 ms CreateObjectMapping: 0.044100 ms MarkObjects: 1.710000 ms  DeleteObjects: 0.105000 ms)
+
