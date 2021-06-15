@@ -1163,3 +1163,34 @@ System memory in use after: 88.4 MB.
 Unloading 12 unused Assets to reduce memory usage. Loaded Objects now: 2356.
 Total: 2.292700 ms (FindLiveObjects: 0.480300 ms CreateObjectMapping: 0.042300 ms MarkObjects: 1.664700 ms  DeleteObjects: 0.104300 ms)
 
+========================================================================
+Received Import Request.
+  Time since last request: 1274.106130 seconds.
+  path: Assets/Sounds/Jim Hall - Elsewhere.mp3
+  artifactKey: Guid(9d9200fa9adc3ac45ac79f58c2e5f407) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Sounds/Jim Hall - Elsewhere.mp3 using Guid(9d9200fa9adc3ac45ac79f58c2e5f407) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e242979b765d032d1c912e19c1596a27') in 0.060035 seconds
+  Import took 0.063687 seconds .
+
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.001262 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.38 ms, found 1 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.925 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.40 ms, found 1 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1787 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 88.5 MB.
+System memory in use after: 88.5 MB.
+
+Unloading 12 unused Assets to reduce memory usage. Loaded Objects now: 2360.
+Total: 2.241600 ms (FindLiveObjects: 0.219300 ms CreateObjectMapping: 0.044400 ms MarkObjects: 1.862300 ms  DeleteObjects: 0.114700 ms)
+
