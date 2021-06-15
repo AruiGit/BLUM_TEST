@@ -31,9 +31,13 @@ public class Player_Controler : MonoBehaviour
     [SerializeField] float attackRange = 0.5f;
     bool canAttack = true;
     bool isAttacking = false;
-    bool damageDealt=false;
+    bool damageDealt = false;
 
-    // Start is called before the first frame update
+    //TakingDamage
+    bool canTakeDamage = true;
+    bool isColliding = false;
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -180,7 +184,24 @@ public class Player_Controler : MonoBehaviour
 
     public void ChangeHealth(int value)
     {
-        healthPoints += value;
+
+        if (value <= 0)
+        {
+            if (canTakeDamage == true)
+            {
+                healthPoints += value;
+                canTakeDamage = false;
+                StartCoroutine(TakeDamage());
+            }
+
+        }
+        else
+        {
+            healthPoints += value;
+        }
+        
+
+
         if (healthPoints > maxHealthPoints)
         {
             healthPoints = maxHealthPoints;
@@ -194,8 +215,13 @@ public class Player_Controler : MonoBehaviour
 
     public void TakeDamage(int value, int direction)
     {
-        ChangeHealth(-value);
-        rb.AddForce(new Vector2(125 * direction, 0));
+       
+            
+            ChangeHealth(-value);
+            rb.AddForce(new Vector2(125 * direction, 0));
+           
+        
+        
         
 
     }
@@ -208,46 +234,66 @@ public class Player_Controler : MonoBehaviour
             isGrounded = true;
         }
 
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Enemy") && isColliding == false)
         {
             if (collision.gameObject.GetComponent<Enemy>().CheckEnemyType() == true)
             {
                 collision.gameObject.GetComponent<Enemy>().CrushDamage(damage);
                 rb.velocity = new Vector2(rb.velocity.x, 7);
+                ChangeHealth(0);
             }
             else
             {
                 rb.velocity = new Vector2(rb.velocity.x, 7);
                 ChangeHealth(-1);
             }
+            isColliding = true;
         }
     }
 
-    
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            isColliding = false;
+        }
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            isColliding = false;
+        }
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Enemy") && isColliding == false)
         {
             ChangeHealth(-1);
             Vector2 dir = transform.position - collision.transform.position;
             if (dir.x > 0)
             {
                 // rb.velocity = new Vector2(5, rb.velocity.y);
-                rb.AddForce(new Vector2(250, 0));
+                rb.AddForce(new Vector2(350, 0));
             }
             else
             {
                 //rb.velocity = new Vector2(-5, rb.velocity.y);
-                rb.AddForce(new Vector2(-250, 0));
+                rb.AddForce(new Vector2(-350, 0));
             }
+            isColliding = true;
         }
 
     }
 
     
     
-
+    IEnumerator TakeDamage()
+    {
+        yield return new WaitForSeconds(0.5f);
+        canTakeDamage = true;
+    }
     IEnumerator attackCooldown()
     {
         yield return new WaitForSeconds(0.517f);

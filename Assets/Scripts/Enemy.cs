@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     Rigidbody2D rb;
     bool isFlipped;
     bool canMove = true;
+    bool canTakeDamage = true;
 
     SpriteRenderer sprite;
 
@@ -73,20 +74,25 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int value, int direction)
     {
-        healthPoints -= value;
-        rb.AddForce(new Vector2(250 * direction, 0));
-        enemyAnimator.SetTrigger("isHit");
-
-        
+        if (canTakeDamage == true)
+        {
+            canTakeDamage = false;
+            healthPoints -= value;
+            rb.AddForce(new Vector2(250 * direction, 0));
+            enemyAnimator.SetTrigger("isHit");
+            StartCoroutine(TakeDamage());
+        }
     }
 
     public void CrushDamage(int value)
     {
-        healthPoints -= value;
-        enemyAnimator.SetTrigger("isCrushed");
-        Debug.Log("Gniecienie przeciwnika");
-       // enemyAnimator.ResetTrigger("isCrushed");
-       
+        if (canTakeDamage == true)
+        {
+            canTakeDamage = false;
+            healthPoints -= value;
+            enemyAnimator.SetTrigger("isCrushed");
+            StartCoroutine(TakeDamage());
+        } 
     }
 
     public bool CheckEnemyType()
@@ -127,5 +133,11 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         Drop();
         Destroy(gameObject);
+    }
+
+    IEnumerator TakeDamage()
+    {
+        yield return new WaitForSeconds(0.5f);
+        canTakeDamage = true;
     }
 }
