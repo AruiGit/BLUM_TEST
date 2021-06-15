@@ -269,7 +269,7 @@ public class Player_Controler : MonoBehaviour
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Enemy")|| collision.gameObject.CompareTag("Spike"))
         {
             isColliding = false;
         }
@@ -294,6 +294,12 @@ public class Player_Controler : MonoBehaviour
             isColliding = true;
         }
 
+        if(collision.gameObject.CompareTag("Spike") && isColliding == false)
+        {
+            ChangeHealth(-1);
+            isColliding = true;
+        }
+
     }
 
     public void ChangeMaxHealth(int value)
@@ -308,6 +314,10 @@ public class Player_Controler : MonoBehaviour
     public void ChangeSecretKey()
     {
         haveSecretKey = !haveSecretKey;
+    }
+    public bool GetSecretKey()
+    {
+        return haveSecretKey;
     }
     public void ChangeDamage(int value)
     {
