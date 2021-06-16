@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Game_Manager : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class Game_Manager : MonoBehaviour
     [SerializeField] Image[] healthBars;
     [SerializeField] Sprite fullHeart;
     [SerializeField] Sprite emptyHeart;
-    bool additionalLifeIsActive = false;
+    [SerializeField] Text restartGame;
 
     Player_Controler player;
 
@@ -25,7 +26,9 @@ public class Game_Manager : MonoBehaviour
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<Player_Controler>();
-        shop.active = false;
+        shop.SetActive(false);
+        restartGame.enabled = false;
+        
     }
 
     // Update is called once per frame
@@ -33,6 +36,14 @@ public class Game_Manager : MonoBehaviour
     {
         CoinUiUpdate();
         HearthUiUpdate();
+        if (player.CheckDeath() == true)
+        {
+            restartGame.enabled = true;
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+        }
     }
 
     void CoinUiUpdate()
@@ -44,7 +55,6 @@ public class Game_Manager : MonoBehaviour
     {
         if (player.GetMaxHealth() == 4)
         {
-            additionalLifeIsActive = true;
             healthBars[3].enabled = true;
         }
         else

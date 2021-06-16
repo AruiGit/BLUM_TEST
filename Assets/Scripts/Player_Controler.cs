@@ -324,6 +324,11 @@ public class Player_Controler : MonoBehaviour
         damage += value;
     }
 
+    public bool CheckDeath()
+    {
+        return isDeath;
+    }
+
     IEnumerator TakeDamage()
     {
         yield return new WaitForSeconds(0.5f);
