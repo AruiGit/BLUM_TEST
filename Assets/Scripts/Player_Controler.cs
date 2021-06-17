@@ -207,10 +207,8 @@ public class Player_Controler : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            Debug.Log("Dotykam ziemi triggerem");
             isGrounded = true;
         }
-
         if (collision.gameObject.CompareTag("Enemy") && isColliding == false)
         {
             if (collision.gameObject.GetComponent<Enemy>().CheckEnemyType() == true)

@@ -8,6 +8,7 @@ public class Collectible : MonoBehaviour
     Animator animator;
     CircleCollider2D collider;
     [SerializeField] AudioSource collectSound;
+    Player_Controler player;
     bool isTaken = false;
 
     private void Start()
@@ -25,20 +26,21 @@ public class Collectible : MonoBehaviour
             {
                 return;
             }
+
+            player = collision.GetComponent<Player_Controler>();
             collectSound.Play();
+
             if (gameObject.CompareTag("Coin"))
             {
                 collider.enabled = false;
                 isTaken = true;
-                collision.GetComponent<Player_Controler>().AddCoints(value);
-                
+                player.AddCoints(value);
                 StartCoroutine(AnimationTime(0.1f));
             }
-
             if (gameObject.CompareTag("Heart"))
             {
                 isTaken = true;
-                collision.GetComponent<Player_Controler>().ChangeHealth(value);
+                player.ChangeHealth(value);
                 collider.enabled = false;
                 animator.SetTrigger("pickedHeart");
                 StartCoroutine(AnimationTime(0.517f));
