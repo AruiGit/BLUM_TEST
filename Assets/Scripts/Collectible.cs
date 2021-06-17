@@ -21,26 +21,28 @@ public class Collectible : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            if (isTaken == true)
+            {
+                return;
+            }
             collectSound.Play();
-            if (gameObject.CompareTag("Coin")&&isTaken==false)
+            if (gameObject.CompareTag("Coin"))
             {
                 collider.enabled = false;
                 isTaken = true;
                 collision.GetComponent<Player_Controler>().AddCoints(value);
                 
-                StartCoroutine(AnimationTime(0.517f));
+                StartCoroutine(AnimationTime(0.1f));
             }
 
-            if (gameObject.CompareTag("Heart") && isTaken == false)
+            if (gameObject.CompareTag("Heart"))
             {
                 isTaken = true;
                 collision.GetComponent<Player_Controler>().ChangeHealth(value);
                 collider.enabled = false;
                 animator.SetTrigger("pickedHeart");
-                StartCoroutine(AnimationTime(0.2f));
+                StartCoroutine(AnimationTime(0.517f));
             }
-
-            
         }
     }
 

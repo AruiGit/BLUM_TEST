@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player_Controler : MonoBehaviour
 {
-    bool isDeath = false;
+    bool isDead = false;
 
     //Sprite and animations
     [SerializeField]SpriteRenderer sprite;
@@ -48,10 +48,9 @@ public class Player_Controler : MonoBehaviour
         attackSound = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (isDeath == false)
+        if (isDead == false)
         {
             Movement();
             Jump();
@@ -60,12 +59,10 @@ public class Player_Controler : MonoBehaviour
 
         if (healthPoints <= 0)
         {
-            isDeath = true;
+            isDead = true;
             playerAnimator.SetTrigger("isDead");
         }
-
     }
-
     void Movement()
     {
         if (isPreparingToJump == false )
@@ -90,9 +87,9 @@ public class Player_Controler : MonoBehaviour
                 sprite.flipX = false;
                 attackPosition.localPosition = new Vector2(0.135f, 0);
                 dir = 1;
-            }
-            
+            } 
         }
+
         if (horizontalInput == 0)
         {
             playerAnimator.SetBool("isRuning", false);
@@ -104,7 +101,6 @@ public class Player_Controler : MonoBehaviour
         {
             if (Input.GetKeyUp(KeyCode.Space))
             {
-                
                 rb.velocity = new Vector2(rb.velocity.x, jumpHight);
                 playerAnimator.ResetTrigger("prepToJump");
                 playerAnimator.SetBool("isJumping", true);
@@ -114,7 +110,6 @@ public class Player_Controler : MonoBehaviour
 
             if (Input.GetKey(KeyCode.Space))
             {
-               
                 jumpHight += 10 * Time.deltaTime;
                 jumpHight = Mathf.Clamp(jumpHight, 3f, maxJumpHight);
                 playerAnimator.SetTrigger("prepToJump");
@@ -140,16 +135,14 @@ public class Player_Controler : MonoBehaviour
         {
             playerAnimator.SetBool("isFalling", false);
         }
-
     }
-
     void Attack()
     {
         if (Input.GetKeyDown(KeyCode.E) && canAttack==true)
         {
             attackSound.Play();
             isAttacking = true;
-           Collider2D[] enemiesArrey = Physics2D.OverlapCircleAll(attackPosition.position, attackRange,LayerMask.GetMask("Enemy"));
+            Collider2D[] enemiesArrey = Physics2D.OverlapCircleAll(attackPosition.position, attackRange,LayerMask.GetMask("Enemy"));
             playerAnimator.SetTrigger("isAttacking");
             canAttack = false;
             StartCoroutine(attackCooldown());
@@ -162,22 +155,17 @@ public class Player_Controler : MonoBehaviour
                     enemy.gameObject.GetComponent<Enemy>().TakeDamage(damage, dir);
                     Debug.Log(enemy.gameObject.name);
                 }
-
             }
-
         }
     }
-
     private void OnDrawGizmosSelected()
     {
         if (attackPosition == null)
         {
             return;
         }
-
         Gizmos.DrawWireSphere(attackPosition.position, attackRange);
     }
-
     public void AddCoints(int value)
     {
         money += value;
@@ -186,10 +174,8 @@ public class Player_Controler : MonoBehaviour
     {
         return money;
     }
-
     public void ChangeHealth(int value)
     {
-
         if (value <= 0)
         {
             if (canTakeDamage == true)
@@ -198,39 +184,25 @@ public class Player_Controler : MonoBehaviour
                 canTakeDamage = false;
                 StartCoroutine(TakeDamage());
             }
-
         }
         else
         {
             healthPoints += value;
         }
-        
-
-
         if (healthPoints > maxHealthPoints)
         {
             healthPoints = maxHealthPoints;
         }
-       
     }
     public int GetHealth()
     {
         return healthPoints;
     }
-
     public void TakeDamage(int value, int direction)
     {
-       
-            
             ChangeHealth(-value);
             rb.AddForce(new Vector2(125 * direction, 0));
-           
-        
-        
-        
-
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -255,7 +227,6 @@ public class Player_Controler : MonoBehaviour
             isColliding = true;
         }
     }
-
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
@@ -274,34 +245,32 @@ public class Player_Controler : MonoBehaviour
             isColliding = false;
         }
     }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Enemy") && isColliding == false)
+        if (isColliding == true)
+        {
+            return;
+        }
+        if (collision.gameObject.CompareTag("Enemy"))
         {
             ChangeHealth(-1);
             Vector2 dir = transform.position - collision.transform.position;
             if (dir.x > 0)
             {
-                // rb.velocity = new Vector2(5, rb.velocity.y);
                 rb.AddForce(new Vector2(350, 0));
             }
             else
             {
-                //rb.velocity = new Vector2(-5, rb.velocity.y);
                 rb.AddForce(new Vector2(-350, 0));
             }
             isColliding = true;
         }
-
-        if(collision.gameObject.CompareTag("Spike") && isColliding == false)
+        if(collision.gameObject.CompareTag("Spike"))
         {
             ChangeHealth(-1);
             isColliding = true;
         }
-
     }
-
     public void ChangeMaxHealth(int value)
     {
         maxHealthPoints += value;
@@ -310,7 +279,6 @@ public class Player_Controler : MonoBehaviour
     {
         return maxHealthPoints;
     }
-    
     public void ChangeSecretKey()
     {
         haveSecretKey = !haveSecretKey;
@@ -323,10 +291,9 @@ public class Player_Controler : MonoBehaviour
     {
         damage += value;
     }
-
     public bool CheckDeath()
     {
-        return isDeath;
+        return isDead;
     }
 
     IEnumerator TakeDamage()

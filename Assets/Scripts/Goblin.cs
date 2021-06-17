@@ -12,7 +12,7 @@ public class Goblin : MonoBehaviour
     int dir;
 
     Enemy enemy;
-   Animator enemyAnimator;
+    Animator enemyAnimator;
 
     void Start()
     {
@@ -20,12 +20,9 @@ public class Goblin : MonoBehaviour
         attackPositionInit = attackPosition.localPosition;
         enemyAnimator = GetComponent<Animator>();
     }
-
-    // Update is called once per frame
     void Update()
     {
         AttackPositionUptade();
-        //enemyAnimator = enemy.GetAnimator();
     }
 
     void AttackPositionUptade()
@@ -54,16 +51,8 @@ public class Goblin : MonoBehaviour
             {
                 player.gameObject.GetComponent<Player_Controler>().TakeDamage(damage, dir);
             }
-        }
-
-        
+        } 
     }
-    IEnumerator attackCooldown()
-    {
-        yield return new WaitForSeconds(0.5f);
-        canAttack = true;
-    }
-
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -80,7 +69,6 @@ public class Goblin : MonoBehaviour
             Attack();
         }
     }
-
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -94,7 +82,12 @@ public class Goblin : MonoBehaviour
         {
             return;
         }
-
         Gizmos.DrawWireSphere(attackPosition.position, attackRange);
+    }
+
+    IEnumerator attackCooldown()
+    {
+        yield return new WaitForSeconds(0.5f);
+        canAttack = true;
     }
 }

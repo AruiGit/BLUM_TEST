@@ -11,7 +11,6 @@ public class Shop : MonoBehaviour
         player = GameObject.Find("Player").GetComponent<Player_Controler>();
     }
 
-
     public void BuyHPUp()
     {
         if (player.GetCoins() >= 10)
@@ -21,7 +20,6 @@ public class Shop : MonoBehaviour
             HP_UP.SetActive(false);
         }
     }
-
     public void BuySecretKey()
     {
         if (player.GetCoins() >= 15)
@@ -31,7 +29,6 @@ public class Shop : MonoBehaviour
             Secret_Key.SetActive(false);
         }
     }
-
     public void BuyDamageUP()
     {
         if (player.GetCoins() >= 20)

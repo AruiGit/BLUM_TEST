@@ -24,6 +24,7 @@ public class Enemy : MonoBehaviour
 
     //Drops
     [SerializeField]GameObject coinPrefab,hearthPrefab;
+
     void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
@@ -31,8 +32,6 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         dyingSound = GetComponent<AudioSource>();
     }
-
-    // Update is called once per frame
     void Update()
     {
         Movement();
@@ -46,16 +45,13 @@ public class Enemy : MonoBehaviour
             
             enemyAnimator.SetTrigger("isDead");
             StartCoroutine(DeathTimer());
-            
         }
     }
 
     void Movement()
     {
-
         if (patrolPoints != null && canMove == true)
         {
-
             if(transform.position.x- patrolPoints[currentPatrolPoint].position.x > 0)
             {
                 sprite.flipX = true;
@@ -81,7 +77,6 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-
     public void TakeDamage(int value, int direction)
     {
         if (canTakeDamage == true)
@@ -93,7 +88,6 @@ public class Enemy : MonoBehaviour
             StartCoroutine(TakeDamage());
         }
     }
-
     public void CrushDamage(int value)
     {
         if (canTakeDamage == true)
@@ -104,27 +98,22 @@ public class Enemy : MonoBehaviour
             StartCoroutine(TakeDamage());
         } 
     }
-
     public bool CheckEnemyType()
     {
         return isShroomType;
     }
-
     public bool CheckIfFlipped()
     {
         return isFlipped;
     }
-
     public void Flip(bool value)
     {
         sprite.flipX = value;
     }
-
     public void StopStartMovement(bool value)
     {
         canMove = value;
     }
-
     void Drop()
     {
         int dropID = Random.Range(0, 100);
@@ -144,7 +133,6 @@ public class Enemy : MonoBehaviour
         Drop();
         Destroy(gameObject);
     }
-
     IEnumerator TakeDamage()
     {
         yield return new WaitForSeconds(0.5f);
