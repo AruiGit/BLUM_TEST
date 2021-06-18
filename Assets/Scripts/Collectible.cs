@@ -8,7 +8,6 @@ public class Collectible : MonoBehaviour
     protected Animator animator;
     CircleCollider2D collider;
     public AudioSource collectSound;
-    protected Player_Controler player;
 
     private void Start()
     {
@@ -21,13 +20,12 @@ public class Collectible : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            player = collision.GetComponent<Player_Controler>();
             collectSound.Play();
-            OnCollect();
+            OnCollect(collision.GetComponent<Player_Controler>());
         }
     }
 
-    public virtual void OnCollect()
+    public virtual void OnCollect(Player_Controler player)
     {
         collider.enabled = false;
 
