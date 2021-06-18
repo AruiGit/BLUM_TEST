@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 3834427519376600637}
   - component: {fileID: 7924450436915146740}
   - component: {fileID: 6147264373608298930}
-  - component: {fileID: 8531368016429709493}
   - component: {fileID: 3383767214453503787}
   - component: {fileID: -4454768675571300058}
+  - component: {fileID: 6438464796505823908}
   m_Layer: 0
   m_Name: HeartPrefab
   m_TagString: Heart
@@ -105,20 +105,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &8531368016429709493
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8462051259193414479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 683c82ae7475d1d4fb69d6d0890f4c75, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  value: 1
-  collectSound: {fileID: 0}
 --- !u!58 &3383767214453503787
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -231,3 +217,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &6438464796505823908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8462051259193414479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fb7f21cc308e6c4aadad90b4a0d5075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  value: 1
+  collectSound: {fileID: -4454768675571300058}

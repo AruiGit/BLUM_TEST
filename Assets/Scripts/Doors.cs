@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class Doors : MonoBehaviour
 {
+    Player_Controler player;
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        player = collision.GetComponent<Player_Controler>();
+        if (player != null)
         {
-
-            if (collision.GetComponent<Player_Controler>().GetSecretKey() == true)
+            if (player.GetSecretKey() == true)
             {
-                collision.GetComponent<Player_Controler>().ChangeSecretKey();
-                Destroy(gameObject);
+                player.ChangeSecretKey();
+                Destroy(this.gameObject);
             }
         }
     }

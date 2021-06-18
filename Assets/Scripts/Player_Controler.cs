@@ -39,7 +39,7 @@ public class Player_Controler : MonoBehaviour
     bool isColliding = false;
 
     //Envo
-    bool haveSecretKey = false;
+    public bool haveSecretKey = false;
 
     void Start()
     {
