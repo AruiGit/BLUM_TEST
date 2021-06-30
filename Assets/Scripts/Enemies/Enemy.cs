@@ -6,49 +6,66 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] Transform[] patrolPoints;
     int currentPatrolPoint = 0;
-    float finishDistance = 0.5f;
-    float movementStep = 2;
+    protected float finishDistance = 0.5f;
+    protected float movementStep = 2;
     [SerializeField] bool isShroomType = true;
-    Animator enemyAnimator;
-    Rigidbody2D rb;
-    bool isFlipped;
-    bool canMove = true;
+    protected Animator enemyAnimator;
+    protected Rigidbody2D rb;
+    protected bool isFlipped;
+    protected bool canMove = true;
     bool canTakeDamage = true;
 
-    bool isPlaying = false;
-    AudioSource dyingSound;
 
-    SpriteRenderer sprite;
+    protected bool isPlaying = false;
+    protected AudioSource dyingSound;
+    protected Collider2D[] enemyColliders;
 
-    [SerializeField]int healthPoints = 2;
+    protected SpriteRenderer sprite;
+
+    //Stats
+    public int healthPoints = 2;
+    public int damage = 1;
 
     //Drops
     [SerializeField]GameObject coinPrefab,hearthPrefab;
 
-    void Start()
+    //Player_Detection
+    protected bool playerSeen = false;
+    protected Player_Controler player;
+
+    protected virtual void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
         enemyAnimator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         dyingSound = GetComponent<AudioSource>();
+        enemyColliders = GetComponents<Collider2D>();
     }
     void Update()
     {
-        Movement();
-        if (healthPoints <= 0)
+        if(healthPoints > 0)
+        {
+            Movement();
+        }
+        else
         {
             if (isPlaying == false)
             {
                 isPlaying = true;
                 dyingSound.Play();
+                rb.gravityScale = 0;
+                foreach(Collider2D col in enemyColliders)
+                {
+                    col.enabled = false;
+                }
             }
-            
+            rb.velocity = new Vector2(0, 0);
             enemyAnimator.SetTrigger("isDead");
             StartCoroutine(DeathTimer());
         }
     }
 
-    void Movement()
+    protected virtual void Movement()
     {
         if (patrolPoints != null && canMove == true)
         {
@@ -127,7 +144,17 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    IEnumerator DeathTimer()
+    public void PlayerDetection(bool value, Player_Controler player)
+    {
+        playerSeen = value;
+        this.player = player;
+    }
+    public void PlayerDetection(bool value)
+    {
+        playerSeen = value;
+    }
+
+    protected IEnumerator DeathTimer()
     {
         yield return new WaitForSeconds(0.5f);
         Drop();

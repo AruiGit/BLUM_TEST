@@ -13,12 +13,14 @@ public class Player_Controler : MonoBehaviour
     //Movement
     float horizontalInput;
     int speed = 5;
+    float maxSpeed;
     float maxJumpHight = 10;
     float jumpHight;
     Rigidbody2D rb;
     bool isGrounded;
     bool isPreparingToJump = false;
     int dir;
+    RaycastHit2D ray;
 
     //Stats
     [SerializeField]int healthPoints = 3;
@@ -46,6 +48,7 @@ public class Player_Controler : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         maxHealthPoints = healthPoints;
         attackSound = GetComponent<AudioSource>();
+        maxSpeed = speed;
     }
 
     void Update()
@@ -55,24 +58,34 @@ public class Player_Controler : MonoBehaviour
             Movement();
             Jump();
             Attack();
+            Dash();
         }
 
         if (healthPoints <= 0)
         {
             isDead = true;
             playerAnimator.SetTrigger("isDead");
+            StartCoroutine(deathTimer());
         }
     }
     void Movement()
     {
-        if (isPreparingToJump == false )
+        if (isPreparingToJump == false && isColliding==false)
         {
             horizontalInput = Input.GetAxis("Horizontal");
             Vector2 direction = new Vector2(horizontalInput, 0);
             playerAnimator.SetBool("isRuning", true);
-            if (horizontalInput != 0)
+            ray = Physics2D.Raycast(transform.position, direction, 0.7f, LayerMask.GetMask("Map"));
+            if(ray.collider!= null)
             {
-                transform.Translate(direction * speed * Time.deltaTime);
+                    return;
+            }
+            
+            if (horizontalInput != 0) 
+            {
+                // transform.Translate(direction * speed * Time.deltaTime);
+                 rb.velocity= new Vector2 (horizontalInput * speed,rb.velocity.y);
+              
             }
             if (horizontalInput < 0 && isAttacking == false)
             {
@@ -120,20 +133,34 @@ public class Player_Controler : MonoBehaviour
             {
                 isPreparingToJump = false;
             }
-
             if (isGrounded == true)
             {
                 playerAnimator.SetBool("isJumping", false);
             }
+            
         }
 
-        if (rb.velocity.y < 0)
+        if (isGrounded == false)
+        {
+            isPreparingToJump = false;
+        }
+
+        if (rb.velocity.y < -0.1f)
         {
             playerAnimator.SetBool("isFalling", true);
         }
         else
         {
             playerAnimator.SetBool("isFalling", false);
+        }
+    }
+
+    void Dash()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Debug.Log("Dashing");
+          //  rb.AddForce(new Vector2(1000 * dir, 0));
         }
     }
     void Attack()
@@ -149,6 +176,7 @@ public class Player_Controler : MonoBehaviour
             
             foreach(Collider2D enemy in enemiesArrey)
             {
+                Debug.Log(enemy.gameObject);
                 if (damageDealt == false)
                 {
                     damageDealt = true;
@@ -255,11 +283,11 @@ public class Player_Controler : MonoBehaviour
             Vector2 dir = transform.position - collision.transform.position;
             if (dir.x > 0)
             {
-                rb.AddForce(new Vector2(350, 0));
+                rb.velocity=new Vector2(7, 0);
             }
             else
             {
-                rb.AddForce(new Vector2(-350, 0));
+                rb.velocity=new Vector2(-7, 0);
             }
             isColliding = true;
         }
@@ -306,5 +334,11 @@ public class Player_Controler : MonoBehaviour
         isAttacking = false;
         damageDealt = false;
         playerAnimator.ResetTrigger("isAttacking");
+    }
+
+    IEnumerator deathTimer()
+    {
+        yield return new WaitForSeconds(0.517f);
+        sprite.enabled = false;
     }
 }
