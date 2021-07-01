@@ -12,6 +12,7 @@ TagManager:
   - Spike
   - Doors
   - Death_Bringer
+  - Spell
   layers:
   - Default
   - TransparentFX

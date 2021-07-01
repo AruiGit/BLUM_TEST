@@ -28,7 +28,6 @@ public class Collectible : MonoBehaviour
     public virtual void OnCollect(Player_Controler player)
     {
         collider.enabled = false;
-
     }
 
     public IEnumerator AnimationTime(float value)

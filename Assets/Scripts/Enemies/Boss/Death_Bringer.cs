@@ -8,6 +8,7 @@ public class Death_Bringer : Enemy
     int dir;
     bool canAttack = true;
     public GameObject spellPrefab;
+    bool isCasting = false;
 
     protected override void Start()
     {
@@ -75,7 +76,7 @@ public class Death_Bringer : Enemy
         if (attackHitted == true)
         {
             player.ChangeCollision();
-            StartCoroutine(StunTime());
+            StartCoroutine(player.StunTime(1f));
             player.TakeDamage(damage, dir * 10);
             attackHitted = false;
         }
@@ -85,11 +86,11 @@ public class Death_Bringer : Enemy
     {
         if (Mathf.Abs(player.transform.position.x - transform.position.x) < 6 && player.transform.position.y - transform.position.y > 3 && canAttack == true)
         {
+            isCasting = true;
             canMove = false;
             canAttack = false;
             StartCoroutine(Attacking(0.716f));
             enemyAnimator.SetTrigger("isCasting");
-            Instantiate(spellPrefab, new Vector2(player.transform.position.x, player.transform.position.y - 1), Quaternion.identity);
         }
     }
 
@@ -126,14 +127,12 @@ public class Death_Bringer : Enemy
     {
         yield return new WaitForSeconds(attackTime);
         canMove = true;
+        if (isCasting == true)
+        {
+            Instantiate(spellPrefab, new Vector2(player.transform.position.x, player.transform.position.y + 3), Quaternion.identity);
+            isCasting = false;
+        }
         yield return new WaitForSeconds(1.5f- attackTime);
         canAttack = true;
     }
-
-    IEnumerator StunTime()
-    {
-        yield return new WaitForSeconds(1f);
-        player.ChangeCollision();
-    }
-   
 }

@@ -111,6 +111,10 @@ public class Player_Controler : MonoBehaviour
         {
             playerAnimator.SetBool("isRuning", false);
         }
+        if (isColliding == true)
+        {
+            playerAnimator.SetBool("isRuning", false);
+        }
     }
     void Jump()
     {
@@ -256,10 +260,16 @@ public class Player_Controler : MonoBehaviour
             }
             isColliding = true;
         }
+        if (collision.gameObject.CompareTag("Death_Bringer"))
+        {
+            rb.velocity = new Vector2(rb.velocity.x, 15);
+            ChangeHealth(-1);
+            isColliding = true;
+        }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Death_Bringer"))
         {
             isColliding = false;
         }
@@ -281,7 +291,7 @@ public class Player_Controler : MonoBehaviour
         {
             return;
         }
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Death_Bringer"))
         {
             ChangeHealth(-1);
             Vector2 dir = transform.position - collision.transform.position;
@@ -347,5 +357,10 @@ public class Player_Controler : MonoBehaviour
     {
         yield return new WaitForSeconds(0.517f);
         sprite.enabled = false;
+    }
+    public IEnumerator StunTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        ChangeCollision();
     }
 }
