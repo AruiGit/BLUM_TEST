@@ -26,7 +26,7 @@ public class Player_Controler : MonoBehaviour
     //Stats
     [SerializeField]int healthPoints = 3;
     int maxHealthPoints;
-    int money = 0;
+    int money = 30;
     int damage = 3;
 
     //Attack

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player_Detection : MonoBehaviour
 {
     Player_Controler player;
-    protected Enemy enemy;
+    public Enemy enemy;
 
     protected virtual void Start()
     {

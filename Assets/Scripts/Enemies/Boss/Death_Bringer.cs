@@ -1,14 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Death_Bringer : Enemy
 {
     bool attackHitted = false;
     int dir;
-    bool canAttack = true;
+    public bool canAttack = true;
     public GameObject spellPrefab;
     bool isCasting = false;
+    int stamina = 1;
+    int mana = 2;
+    int maxMana, maxStamina;
+
+    //UI
+    [SerializeField]Slider manaSlider, staminaSlider;
 
     protected override void Start()
     {
@@ -18,20 +25,33 @@ public class Death_Bringer : Enemy
         dyingSound = GetComponent<AudioSource>();
         enemyColliders = GetComponents<Collider2D>();
         finishDistance = 2f;
+        maxMana = mana;
+        maxStamina = stamina;
+        manaSlider.maxValue = maxMana;
+        staminaSlider.maxValue = maxStamina;
     }
 
     protected override void Update()
     {
+        UpdateUI();
         if (healthPoints > 0 && playerSeen == false)
         {
             base.Movement();
+            canMove = true;
             enemyAnimator.SetBool("isWalking", true);
+            mana = maxMana;
+            stamina = maxStamina;
+            
         }
         else if(healthPoints>0 && playerSeen == true)
         {
             Movement();
             Attack();
             Cast();
+            if(stamina==0 && mana == 0)
+            {
+                Regenerate();
+            }
         }
         else
         {
@@ -51,15 +71,17 @@ public class Death_Bringer : Enemy
             
             StartCoroutine(DeathTimer(0.767f));
         }
+        
     }
 
     void Attack()
     {
         
-        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 6  && player.transform.position.y - transform.position.y < 3 && canAttack==true)
+        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 6  && player.transform.position.y - transform.position.y < 3 && canAttack==true && stamina >0 )
         {
             canAttack = false;
             canMove = false;
+            stamina--;
             StartCoroutine(Attacking(0.767f));
             if (isFlipped == true)
             {
@@ -84,14 +106,21 @@ public class Death_Bringer : Enemy
 
     void Cast()
     {
-        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 6 && player.transform.position.y - transform.position.y > 3 && canAttack == true)
+        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 6 && player.transform.position.y - transform.position.y > 3 && canAttack == true && mana > 0)
         {
+            mana--;
             isCasting = true;
             canMove = false;
             canAttack = false;
             StartCoroutine(Attacking(0.716f));
             enemyAnimator.SetTrigger("isCasting");
         }
+    }
+
+    void Regenerate()
+    {
+        canAttack = false;
+        StartCoroutine(Regeneration());
     }
 
     public void AttackHitted()
@@ -123,6 +152,26 @@ public class Death_Bringer : Enemy
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            canMove = false;
+        }
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            canMove = true;
+        }
+    }
+    void UpdateUI()
+    {
+        manaSlider.value = mana;
+        staminaSlider.value = stamina;
+    }
+
     IEnumerator Attacking(float attackTime)
     {
         yield return new WaitForSeconds(attackTime);
@@ -134,5 +183,23 @@ public class Death_Bringer : Enemy
         }
         yield return new WaitForSeconds(1.5f- attackTime);
         canAttack = true;
+    }
+
+    IEnumerator Regeneration()
+    {
+        for(int i = 0; i < maxMana; i++)
+        {
+            if (mana < maxMana)
+            {
+                mana++;
+            }
+            if (stamina < maxStamina)
+            {
+                stamina++;
+            }
+            yield return new WaitForSeconds(1f);
+        }
+        canAttack = true;
+        
     }
 }
