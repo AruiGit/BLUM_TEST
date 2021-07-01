@@ -8,12 +8,11 @@ public class Enemy : MonoBehaviour
     int currentPatrolPoint = 0;
     protected float finishDistance = 0.5f;
     protected float movementStep = 2;
-    [SerializeField] bool isShroomType = true;
     protected Animator enemyAnimator;
     protected Rigidbody2D rb;
     protected bool isFlipped;
     protected bool canMove = true;
-    bool canTakeDamage = true;
+    protected bool canTakeDamage = true;
 
 
     protected bool isPlaying = false;
@@ -41,7 +40,7 @@ public class Enemy : MonoBehaviour
         dyingSound = GetComponent<AudioSource>();
         enemyColliders = GetComponents<Collider2D>();
     }
-    void Update()
+    protected virtual void Update()
     {
         if(healthPoints > 0)
         {
@@ -67,7 +66,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Movement()
     {
-        if (patrolPoints != null && canMove == true)
+        if (patrolPoints != null && canMove == true && patrolPoints.Length!=0)
         {
             if(transform.position.x- patrolPoints[currentPatrolPoint].position.x > 0)
             {
@@ -104,20 +103,6 @@ public class Enemy : MonoBehaviour
             enemyAnimator.SetTrigger("isHit");
             StartCoroutine(TakeDamage());
         }
-    }
-    public void CrushDamage(int value)
-    {
-        if (canTakeDamage == true)
-        {
-            canTakeDamage = false;
-            healthPoints -= value;
-            enemyAnimator.SetTrigger("isCrushed");
-            StartCoroutine(TakeDamage());
-        } 
-    }
-    public bool CheckEnemyType()
-    {
-        return isShroomType;
     }
     public bool CheckIfFlipped()
     {
@@ -160,7 +145,7 @@ public class Enemy : MonoBehaviour
         Drop();
         Destroy(gameObject);
     }
-    IEnumerator TakeDamage()
+    protected IEnumerator TakeDamage()
     {
         yield return new WaitForSeconds(0.5f);
         canTakeDamage = true;

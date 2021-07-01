@@ -15,10 +15,10 @@ public class Death_Bringer : Enemy
         rb = GetComponent<Rigidbody2D>();
         dyingSound = GetComponent<AudioSource>();
         enemyColliders = GetComponents<Collider2D>();
-        finishDistance = 1f;
+        finishDistance = 2f;
     }
 
-    void Update()
+    protected override void Update()
     {
         if (healthPoints > 0 && playerSeen == false)
         {

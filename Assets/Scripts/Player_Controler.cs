@@ -21,6 +21,7 @@ public class Player_Controler : MonoBehaviour
     bool isPreparingToJump = false;
     int dir;
     RaycastHit2D ray;
+    Collider2D collider;
 
     //Stats
     [SerializeField]int healthPoints = 3;
@@ -49,6 +50,7 @@ public class Player_Controler : MonoBehaviour
         maxHealthPoints = healthPoints;
         attackSound = GetComponent<AudioSource>();
         maxSpeed = speed;
+        collider = GetComponent<Collider2D>();
     }
 
     void Update()
@@ -66,6 +68,8 @@ public class Player_Controler : MonoBehaviour
             isDead = true;
             playerAnimator.SetTrigger("isDead");
             StartCoroutine(deathTimer());
+            collider.enabled = false;
+            rb.gravityScale = 0;
         }
     }
     void Movement()
@@ -145,7 +149,7 @@ public class Player_Controler : MonoBehaviour
             isPreparingToJump = false;
         }
 
-        if (rb.velocity.y < -0.1f)
+        if (rb.velocity.y < -0.2f)
         {
             playerAnimator.SetBool("isFalling", true);
         }
@@ -239,9 +243,9 @@ public class Player_Controler : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("Enemy") && isColliding == false)
         {
-            if (collision.gameObject.GetComponent<Enemy>().CheckEnemyType() == true)
+            if (collision.gameObject.GetComponent<Shroom>() != null)
             {
-                collision.gameObject.GetComponent<Enemy>().CrushDamage(damage);
+                collision.gameObject.GetComponent<Shroom>().CrushDamage(damage);
                 rb.velocity = new Vector2(rb.velocity.x, 7);
                 ChangeHealth(0);
             }
@@ -335,7 +339,6 @@ public class Player_Controler : MonoBehaviour
         damageDealt = false;
         playerAnimator.ResetTrigger("isAttacking");
     }
-
     IEnumerator deathTimer()
     {
         yield return new WaitForSeconds(0.517f);

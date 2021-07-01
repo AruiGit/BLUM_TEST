@@ -2,32 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Goblin : MonoBehaviour
+public class Goblin : Enemy
 {
     [SerializeField]Transform attackPosition;
     [SerializeField] float attackRange;
-    int damage = 1;
     Vector3 attackPositionInit;
     bool canAttack = true;
     int dir;
 
-    Enemy enemy;
-    Animator enemyAnimator;
-
-    void Start()
+    protected override void Start()
     {
-        enemy = GetComponent<Enemy>();
+        base.Start();
         attackPositionInit = attackPosition.localPosition;
-        enemyAnimator = GetComponent<Animator>();
     }
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         AttackPositionUptade();
     }
 
     void AttackPositionUptade()
     {
-        if (enemy.CheckIfFlipped() == true)
+        if (CheckIfFlipped() == true)
         {
             attackPosition.localPosition = -attackPositionInit;
             dir = -1;
@@ -57,14 +53,14 @@ public class Goblin : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            enemy.StopStartMovement(false);
+            StopStartMovement(false);
             if(transform.position.x-collision.transform.position.x < 0)
             {
-                enemy.Flip(false);
+                Flip(false);
             }
             else
             {
-                enemy.Flip(true);
+                Flip(true);
             }
             Attack();
         }
@@ -73,7 +69,7 @@ public class Goblin : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            enemy.StopStartMovement(true);
+            StopStartMovement(true);
         }
     }
     private void OnDrawGizmosSelected()
