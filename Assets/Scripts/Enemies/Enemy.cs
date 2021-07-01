@@ -50,6 +50,7 @@ public class Enemy : MonoBehaviour
         {
             if (isPlaying == false)
             {
+                enemyAnimator.SetTrigger("isDead");
                 isPlaying = true;
                 dyingSound.Play();
                 rb.gravityScale = 0;
@@ -59,8 +60,8 @@ public class Enemy : MonoBehaviour
                 }
             }
             rb.velocity = new Vector2(0, 0);
-            enemyAnimator.SetTrigger("isDead");
-            StartCoroutine(DeathTimer());
+            
+            StartCoroutine(DeathTimer(0.5f));
         }
     }
 
@@ -139,9 +140,9 @@ public class Enemy : MonoBehaviour
         playerSeen = value;
     }
 
-    protected IEnumerator DeathTimer()
+    protected IEnumerator DeathTimer(float deathTimeAnim)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(deathTimeAnim);
         Drop();
         Destroy(gameObject);
     }

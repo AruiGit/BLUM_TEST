@@ -27,7 +27,7 @@ public class Player_Controler : MonoBehaviour
     [SerializeField]int healthPoints = 3;
     int maxHealthPoints;
     int money = 0;
-    int damage = 1;
+    int damage = 3;
 
     //Attack
     [SerializeField]Transform attackPosition;
@@ -324,6 +324,10 @@ public class Player_Controler : MonoBehaviour
     public bool CheckDeath()
     {
         return isDead;
+    }
+    public void ChangeCollision()
+    {
+        isColliding = !isColliding;
     }
 
     IEnumerator TakeDamage()

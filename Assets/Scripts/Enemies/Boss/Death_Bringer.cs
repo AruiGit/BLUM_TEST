@@ -7,6 +7,7 @@ public class Death_Bringer : Enemy
     bool attackHitted = false;
     int dir;
     bool canAttack = true;
+    public GameObject spellPrefab;
 
     protected override void Start()
     {
@@ -29,12 +30,14 @@ public class Death_Bringer : Enemy
         {
             Movement();
             Attack();
+            Cast();
         }
         else
         {
-            enemyAnimator.SetBool("isWalking", false);
+            
             if (isPlaying == false)
             {
+                enemyAnimator.SetTrigger("isDead");
                 isPlaying = true;
                 dyingSound.Play();
                 rb.gravityScale = 0;
@@ -44,8 +47,8 @@ public class Death_Bringer : Enemy
                 }
             }
             rb.velocity = new Vector2(0, 0);
-            enemyAnimator.SetTrigger("isDead");
-            StartCoroutine(DeathTimer());
+            
+            StartCoroutine(DeathTimer(0.767f));
         }
     }
 
@@ -56,7 +59,7 @@ public class Death_Bringer : Enemy
         {
             canAttack = false;
             canMove = false;
-            StartCoroutine(Attacking());
+            StartCoroutine(Attacking(0.767f));
             if (isFlipped == true)
             {
                 dir = -1;
@@ -68,13 +71,25 @@ public class Death_Bringer : Enemy
                 enemyAnimator.SetBool("isFlipped", false);
             }
             enemyAnimator.SetTrigger("isAttacking");
+        }
+        if (attackHitted == true)
+        {
+            player.ChangeCollision();
+            StartCoroutine(StunTime());
+            player.TakeDamage(damage, dir * 10);
+            attackHitted = false;
+        }
+    }
 
-            if (attackHitted == true)
-            {
-                
-                player.TakeDamage(damage,1);
-                attackHitted = false;
-            }
+    void Cast()
+    {
+        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 6 && player.transform.position.y - transform.position.y > 3 && canAttack == true)
+        {
+            canMove = false;
+            canAttack = false;
+            StartCoroutine(Attacking(0.716f));
+            enemyAnimator.SetTrigger("isCasting");
+            Instantiate(spellPrefab, new Vector2(player.transform.position.x, player.transform.position.y - 1), Quaternion.identity);
         }
     }
 
@@ -103,17 +118,22 @@ public class Death_Bringer : Enemy
             {
                 enemyAnimator.SetBool("isWalking", false);
             }
-                transform.position = Vector2.MoveTowards(transform.position, new Vector2(player.transform.position.x, transform.position.y), movementStep * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, new Vector2(player.transform.position.x, transform.position.y), movementStep * Time.deltaTime);
         }
     }
 
-    IEnumerator Attacking()
+    IEnumerator Attacking(float attackTime)
     {
-        yield return new WaitForSeconds(0.767f);
+        yield return new WaitForSeconds(attackTime);
         canMove = true;
-        yield return new WaitForSeconds(1.5f- 0.767f);
+        yield return new WaitForSeconds(1.5f- attackTime);
         canAttack = true;
-        
+    }
+
+    IEnumerator StunTime()
+    {
+        yield return new WaitForSeconds(1f);
+        player.ChangeCollision();
     }
    
 }
