@@ -16,7 +16,7 @@ public class Death_Bringer : Enemy
     bool isRegenerating = false;
 
     //UI
-    [SerializeField]Slider manaSlider, staminaSlider;
+    [SerializeField]Slider staminaSlider;
 
     protected override void Start()
     {
@@ -84,7 +84,7 @@ public class Death_Bringer : Enemy
         {
             canAttack = false;
             canMove = false;
-            StartCoroutine(Attacking(0.767f));
+            StartCoroutine(Attacking(0.767f, 1.5f));
             if (isFlipped == true)
             {
                 dir = -1;
@@ -121,7 +121,7 @@ public class Death_Bringer : Enemy
             isCasting = true;
             canMove = false;
             canAttack = false;
-            StartCoroutine(Attacking(0.716f));
+            StartCoroutine(Attacking(0.716f, 3f));
             enemyAnimator.SetTrigger("isCasting");
         }
     }
@@ -186,7 +186,7 @@ public class Death_Bringer : Enemy
         yield return new WaitForSeconds(0.33f);
         particle.Play();
     }
-    IEnumerator Attacking(float attackTime)
+    IEnumerator Attacking(float attackTime, float attackCooldown)
     {
         yield return new WaitForSeconds(attackTime);
         canMove = true;
@@ -195,7 +195,7 @@ public class Death_Bringer : Enemy
             Instantiate(spellPrefab, new Vector2(player.transform.position.x, player.transform.position.y + 3), Quaternion.identity);
             isCasting = false;
         }
-        yield return new WaitForSeconds(1.5f- attackTime);
+        yield return new WaitForSeconds(attackCooldown- attackTime);
         canAttack = true;
     }
 

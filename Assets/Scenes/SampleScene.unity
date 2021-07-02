@@ -1956,7 +1956,6 @@ MonoBehaviour:
   canAttack: 1
   spellPrefab: {fileID: 4663777140309611615, guid: a3f4b3b3b22565c4985209fcc78b9ef9, type: 3}
   particle: {fileID: 483821734}
-  manaSlider: {fileID: 0}
   staminaSlider: {fileID: 143698526}
 --- !u!4 &287837680 stripped
 Transform:
@@ -8240,7 +8239,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: c05dba9620c05554bba636211324489e, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.49
+  m_Volume: 0.458
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -10359,7 +10358,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: e47e29bda580b1541989be6280808ed0, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.019
   m_Pitch: 1

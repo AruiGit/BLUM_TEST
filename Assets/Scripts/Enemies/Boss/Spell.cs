@@ -6,9 +6,12 @@ public class Spell : MonoBehaviour
 {
     int damage = 1;
     Player_Controler player;
+    [SerializeField]AudioSource spellSound;
+
     void Start()
     {
         StartCoroutine(LifeTime());
+        spellSound.Play();
     }
 
    IEnumerator LifeTime()
