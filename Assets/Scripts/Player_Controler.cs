@@ -13,21 +13,20 @@ public class Player_Controler : MonoBehaviour
     //Movement
     float horizontalInput;
     int speed = 5;
-    float maxSpeed;
     float maxJumpHight = 10;
     float jumpHight;
     Rigidbody2D rb;
     bool isGrounded;
     bool isPreparingToJump = false;
     int dir;
-    RaycastHit2D ray;
+    RaycastHit2D ray, rayHead;
     Collider2D collider;
 
     //Stats
     [SerializeField]int healthPoints = 3;
     int maxHealthPoints;
     int money = 30;
-    int damage = 3;
+    int damage = 1;
 
     //Attack
     [SerializeField]Transform attackPosition;
@@ -49,7 +48,6 @@ public class Player_Controler : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         maxHealthPoints = healthPoints;
         attackSound = GetComponent<AudioSource>();
-        maxSpeed = speed;
         collider = GetComponent<Collider2D>();
     }
 
@@ -79,17 +77,17 @@ public class Player_Controler : MonoBehaviour
             horizontalInput = Input.GetAxis("Horizontal");
             Vector2 direction = new Vector2(horizontalInput, 0);
             playerAnimator.SetBool("isRuning", true);
-            ray = Physics2D.Raycast(transform.position, direction, 0.7f, LayerMask.GetMask("Map"));
-            if(ray.collider!= null)
+            ray = Physics2D.Raycast(new Vector2(transform.position.x,transform.position.y-0.45f), direction, 0.6f, LayerMask.GetMask("Map"));
+            rayHead = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 0.45f), direction, 0.6f, LayerMask.GetMask("Map"));
+
+            if (ray.collider!= null || rayHead.collider != null)
             {
-                    return;
+                rb.velocity = new Vector2(0, rb.velocity.y);
+                return;
             }
-            
             if (horizontalInput != 0) 
             {
-                // transform.Translate(direction * speed * Time.deltaTime);
                  rb.velocity= new Vector2 (horizontalInput * speed,rb.velocity.y);
-              
             }
             if (horizontalInput < 0 && isAttacking == false)
             {
@@ -106,7 +104,6 @@ public class Player_Controler : MonoBehaviour
                 dir = 1;
             } 
         }
-
         if (horizontalInput == 0)
         {
             playerAnimator.SetBool("isRuning", false);
@@ -135,7 +132,6 @@ public class Player_Controler : MonoBehaviour
                 jumpHight = Mathf.Clamp(jumpHight, 3f, maxJumpHight);
                 playerAnimator.SetTrigger("prepToJump");
                 isPreparingToJump = true;
-                
             }
             else
             {
@@ -145,9 +141,7 @@ public class Player_Controler : MonoBehaviour
             {
                 playerAnimator.SetBool("isJumping", false);
             }
-            
         }
-
         if (isGrounded == false)
         {
             isPreparingToJump = false;
@@ -181,15 +175,18 @@ public class Player_Controler : MonoBehaviour
             playerAnimator.SetTrigger("isAttacking");
             canAttack = false;
             StartCoroutine(attackCooldown());
-            
+
             foreach(Collider2D enemy in enemiesArrey)
             {
-                Debug.Log(enemy.gameObject);
-                if (damageDealt == false)
+                if (enemy.CompareTag("Death_Bringer") && damageDealt==false)
+                {
+                    damageDealt = true;
+                    enemy.gameObject.GetComponent<Death_Bringer>().TakeDamage(damage, dir);
+                }
+                else if (damageDealt == false)
                 {
                     damageDealt = true;
                     enemy.gameObject.GetComponent<Enemy>().TakeDamage(damage, dir);
-                    Debug.Log(enemy.gameObject.name);
                 }
             }
         }

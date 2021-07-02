@@ -10,9 +10,10 @@ public class Death_Bringer : Enemy
     public bool canAttack = true;
     public GameObject spellPrefab;
     bool isCasting = false;
-    int stamina = 1;
-    int mana = 2;
-    int maxMana, maxStamina;
+    int stamina = 5;
+    int maxStamina;
+    public ParticleSystem particle;
+    bool isRegenerating = false;
 
     //UI
     [SerializeField]Slider manaSlider, staminaSlider;
@@ -25,9 +26,7 @@ public class Death_Bringer : Enemy
         dyingSound = GetComponent<AudioSource>();
         enemyColliders = GetComponents<Collider2D>();
         finishDistance = 2f;
-        maxMana = mana;
         maxStamina = stamina;
-        manaSlider.maxValue = maxMana;
         staminaSlider.maxValue = maxStamina;
     }
 
@@ -39,18 +38,22 @@ public class Death_Bringer : Enemy
             base.Movement();
             canMove = true;
             enemyAnimator.SetBool("isWalking", true);
-            mana = maxMana;
             stamina = maxStamina;
             
         }
         else if(healthPoints>0 && playerSeen == true)
         {
-            Movement();
-            Attack();
-            Cast();
-            if(stamina==0 && mana == 0)
+            if (isRegenerating == false)
+            {
+                Attack();
+                Cast();
+                Movement();
+            }
+            if(stamina==0)
             {
                 Regenerate();
+                enemyAnimator.SetBool("isWalking", false);
+                isRegenerating = true;
             }
         }
         else
@@ -81,7 +84,6 @@ public class Death_Bringer : Enemy
         {
             canAttack = false;
             canMove = false;
-            stamina--;
             StartCoroutine(Attacking(0.767f));
             if (isFlipped == true)
             {
@@ -93,22 +95,29 @@ public class Death_Bringer : Enemy
                 dir = 1;
                 enemyAnimator.SetBool("isFlipped", false);
             }
+            if (stamina == 1)
+            {
+                particle.transform.localPosition = new Vector2(particle.transform.localPosition.x * dir, particle.transform.localPosition.y);
+                StartCoroutine(ActivateParticle());
+            }
             enemyAnimator.SetTrigger("isAttacking");
+            stamina--;
         }
         if (attackHitted == true)
         {
             player.ChangeCollision();
             StartCoroutine(player.StunTime(1f));
-            player.TakeDamage(damage, dir * 10);
+            player.TakeDamage(damage, dir * 2);
             attackHitted = false;
         }
+        
     }
 
     void Cast()
     {
-        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 6 && player.transform.position.y - transform.position.y > 3 && canAttack == true && mana > 0)
+        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 6 && player.transform.position.y - transform.position.y > 3 && canAttack == true && stamina > 0)
         {
-            mana--;
+            stamina--;
             isCasting = true;
             canMove = false;
             canAttack = false;
@@ -168,10 +177,15 @@ public class Death_Bringer : Enemy
     }
     void UpdateUI()
     {
-        manaSlider.value = mana;
         staminaSlider.value = stamina;
     }
 
+
+    IEnumerator ActivateParticle()
+    {
+        yield return new WaitForSeconds(0.33f);
+        particle.Play();
+    }
     IEnumerator Attacking(float attackTime)
     {
         yield return new WaitForSeconds(attackTime);
@@ -187,19 +201,14 @@ public class Death_Bringer : Enemy
 
     IEnumerator Regeneration()
     {
-        for(int i = 0; i < maxMana; i++)
+        for(int i = 0; i < maxStamina; i++)
         {
-            if (mana < maxMana)
-            {
-                mana++;
-            }
             if (stamina < maxStamina)
             {
                 stamina++;
             }
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
         }
-        canAttack = true;
-        
+        isRegenerating = false;
     }
 }
