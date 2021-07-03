@@ -14,6 +14,7 @@ public class Death_Bringer : Enemy
     int maxStamina;
     public ParticleSystem particle;
     bool isRegenerating = false;
+    Vector2 tempPlayerPosition;
 
     //UI
     [SerializeField]Slider staminaSlider;
@@ -121,6 +122,7 @@ public class Death_Bringer : Enemy
             isCasting = true;
             canMove = false;
             canAttack = false;
+            tempPlayerPosition = player.transform.position;
             StartCoroutine(Attacking(0.716f, 3f));
             enemyAnimator.SetTrigger("isCasting");
         }
@@ -192,7 +194,7 @@ public class Death_Bringer : Enemy
         canMove = true;
         if (isCasting == true)
         {
-            Instantiate(spellPrefab, new Vector2(player.transform.position.x, player.transform.position.y + 3), Quaternion.identity);
+            Instantiate(spellPrefab, new Vector2(tempPlayerPosition.x, tempPlayerPosition.y + 3), Quaternion.identity);
             isCasting = false;
         }
         yield return new WaitForSeconds(attackCooldown- attackTime);

@@ -1,41 +1,78 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
     Player_Controler player;
     [SerializeField] GameObject HP_UP, Secret_Key, DMG_UP;
+    [SerializeField] Text HpPriceText, KeyPriceText, DmgPriceText;
+    int HpPrice = 10;
+    int DmgPrice = 20;
+    int KeyPrice = 1;
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        UpdateUI();
     }
+
 
     public void BuyHPUp()
     {
-        if (player.GetCoins() >= 10)
+        if (player.GetCoins() >= HpPrice)
         {
-            player.AddCoints(-10);
+            player.AddCoints(-HpPrice);
             player.ChangeMaxHealth(1);
-            HP_UP.SetActive(false);
+            HpPrice= PriceUpdate(HpPrice);
+            if (player.GetMaxHealth() == 6)
+            {
+                HP_UP.SetActive(false);
+            }
+
+            UpdateUI();
         }
     }
     public void BuySecretKey()
     {
-        if (player.GetCoins() >= 15)
+        if (player.GetCoins() >= KeyPrice)
         {
-            player.AddCoints(-15);
+            player.AddCoints(-KeyPrice);
             player.ChangeSecretKey();
-            Secret_Key.SetActive(false);
+            KeyPrice=PriceUpdate(KeyPrice);
+
+            UpdateUI();
         }
     }
     public void BuyDamageUP()
     {
-        if (player.GetCoins() >= 20)
+        if (player.GetCoins() >= DmgPrice)
         {
-            player.AddCoints(-20);
+            player.AddCoints(-DmgPrice);
             player.ChangeDamage(1);
-            DMG_UP.SetActive(false);
+            DmgPrice = PriceUpdate(DmgPrice);
+
+            UpdateUI();
         }
+    }
+
+    int PriceUpdate(int price)
+    {
+        if (price == 1)
+        {
+            price = 15;
+        }
+        else
+        {
+            price *= 2;
+        }
+        return price;
+    }
+
+    void UpdateUI()
+    {
+        HpPriceText.text = "Max Health UP  Price: " + HpPrice;
+        KeyPriceText.text = "Secret Key  Price: " + KeyPrice;
+        DmgPriceText.text = "DMG UP  Price: " + DmgPrice;
     }
 }

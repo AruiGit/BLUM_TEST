@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player_Controler : MonoBehaviour
 {
     bool isDead = false;
+    private static Player_Controler playerInstance;
 
     //Sprite and animations
     [SerializeField]SpriteRenderer sprite;
@@ -43,6 +45,14 @@ public class Player_Controler : MonoBehaviour
     //Envo
     public bool haveSecretKey = false;
 
+    void Awake()
+    {
+        if (playerInstance == null)
+        {
+            DontDestroyOnLoad(this);
+            playerInstance = this;
+        }
+    }
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -53,6 +63,11 @@ public class Player_Controler : MonoBehaviour
 
     void Update()
     {
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            Destroy(gameObject);
+        }
+
         if (isDead == false)
         {
             Movement();

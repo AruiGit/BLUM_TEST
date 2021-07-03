@@ -18,17 +18,34 @@ public class Game_Manager : MonoBehaviour
     //Shop
     [SerializeField]GameObject shop;
 
+    private static Game_Manager gameManagerInstance;
+
+    void Awake()
+    {
+        if (gameManagerInstance == null)
+        {
+            DontDestroyOnLoad(this);
+            gameManagerInstance = this;
+        }
+    }
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<Player_Controler>();
         shop.SetActive(false);
         restartGame.enabled = false;
+        for(int i = 3; i < 6; i++)
+        {
+            healthBars[i].enabled = false;
+        }
         
     }
     void Update()
     {
-        CoinUiUpdate();
-        HearthUiUpdate();
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            Destroy(gameObject);
+        }
+        UpdateUI();
         if (player.CheckDeath() == true)
         {
             restartGame.enabled = true;
@@ -45,20 +62,20 @@ public class Game_Manager : MonoBehaviour
     }
     void HearthUiUpdate()
     {
-        if (player.GetMaxHealth() == 4)
-        {
-            healthBars[3].enabled = true;
-        }
-        else
-        {
-            healthBars[3].enabled = false;
-        }
+        
+        healthBars[player.GetMaxHealth()-1].enabled = true;
+
         int playerHealth = player.GetHealth();
 
         for (int i = 0; i < player.GetMaxHealth(); ++i)
         {
             healthBars[i].sprite = playerHealth <= i ? emptyHeart : fullHeart;
         }
+    }
+    void UpdateUI()
+    {
+        CoinUiUpdate();
+        HearthUiUpdate();
     }
     public void OpenShop()
     {
