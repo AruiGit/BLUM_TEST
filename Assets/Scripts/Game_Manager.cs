@@ -14,6 +14,7 @@ public class Game_Manager : MonoBehaviour
     [SerializeField] Text restartGame;
 
     Player_Controler player;
+    [SerializeField] GameObject playerPrefab;
 
     //Shop
     [SerializeField]GameObject shop;
@@ -24,8 +25,12 @@ public class Game_Manager : MonoBehaviour
     {
         if (gameManagerInstance == null)
         {
-            DontDestroyOnLoad(this);
             gameManagerInstance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (gameManagerInstance != this)
+        {
+            Destroy(gameObject);
         }
     }
     void Start()
@@ -41,6 +46,10 @@ public class Game_Manager : MonoBehaviour
     }
     void Update()
     {
+        if (player == null)
+        {
+            player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        }
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             Destroy(gameObject);
@@ -51,8 +60,15 @@ public class Game_Manager : MonoBehaviour
             restartGame.enabled = true;
             if (Input.GetKeyDown(KeyCode.R))
             {
+                player.DestroyPlayer();
+                Instantiate(playerPrefab);
+                ReloadUI();
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
+        }
+        else
+        {
+            restartGame.enabled = false;
         }
     }
 
@@ -76,6 +92,15 @@ public class Game_Manager : MonoBehaviour
     {
         CoinUiUpdate();
         HearthUiUpdate();
+    }
+
+    void ReloadUI()
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            healthBars[3 + i].enabled = false;
+        }
+        shop.GetComponent<Shop>().ResetShop();
     }
     public void OpenShop()
     {

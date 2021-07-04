@@ -27,7 +27,7 @@ public class Player_Controler : MonoBehaviour
     //Stats
     [SerializeField]int healthPoints = 3;
     int maxHealthPoints;
-    int money = 30;
+    int money = 540;
     int damage = 1;
 
     //Attack
@@ -49,8 +49,12 @@ public class Player_Controler : MonoBehaviour
     {
         if (playerInstance == null)
         {
-            DontDestroyOnLoad(this);
             playerInstance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if(playerInstance != this)
+        {
+            Destroy(gameObject);
         }
     }
     void Start()
@@ -79,7 +83,7 @@ public class Player_Controler : MonoBehaviour
         if (healthPoints <= 0)
         {
             isDead = true;
-            playerAnimator.SetTrigger("isDead");
+            playerAnimator.SetBool("isDead 0",true);
             StartCoroutine(deathTimer());
             collider.enabled = false;
             rb.gravityScale = 0;
@@ -177,7 +181,7 @@ public class Player_Controler : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             Debug.Log("Dashing");
-          //  rb.AddForce(new Vector2(1000 * dir, 0));
+            rb.AddForce(new Vector2(1000 * dir, 0));
         }
     }
     void Attack()
@@ -351,7 +355,10 @@ public class Player_Controler : MonoBehaviour
     {
         isColliding = !isColliding;
     }
-
+    public void DestroyPlayer()
+    {
+        Destroy(gameObject);
+    }
     IEnumerator TakeDamage()
     {
         yield return new WaitForSeconds(0.5f);

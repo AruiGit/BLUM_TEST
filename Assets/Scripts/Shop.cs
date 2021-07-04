@@ -11,10 +11,22 @@ public class Shop : MonoBehaviour
     int HpPrice = 10;
     int DmgPrice = 20;
     int KeyPrice = 1;
+    int startHpPrice, startDmgPrice, startKeyPrice;
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<Player_Controler>();
         UpdateUI();
+        startDmgPrice = DmgPrice;
+        startHpPrice = HpPrice;
+        startKeyPrice = KeyPrice;
+    }
+
+    private void Update()
+    {
+        if (player == null)
+        {
+            player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        }
     }
 
 
@@ -68,7 +80,14 @@ public class Shop : MonoBehaviour
         }
         return price;
     }
-
+    public void ResetShop()
+    {
+        KeyPrice = startKeyPrice;
+        DmgPrice = startDmgPrice;
+        HpPrice = startHpPrice;
+        HP_UP.SetActive(true);
+        UpdateUI();
+    }
     void UpdateUI()
     {
         HpPriceText.text = "Max Health UP  Price: " + HpPrice;
