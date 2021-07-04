@@ -50,7 +50,7 @@ public class Shop : MonoBehaviour
         if (player.GetCoins() >= KeyPrice)
         {
             player.AddCoints(-KeyPrice);
-            player.ChangeSecretKey();
+            player.ChangeSecretKey(1);
             KeyPrice=PriceUpdate(KeyPrice);
 
             UpdateUI();

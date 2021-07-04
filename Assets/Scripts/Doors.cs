@@ -10,9 +10,9 @@ public class Doors : MonoBehaviour
         player = collision.GetComponent<Player_Controler>();
         if (player != null)
         {
-            if (player.GetSecretKey() == true)
+            if (player.GetSecretKey() >0)
             {
-                player.ChangeSecretKey();
+                player.ChangeSecretKey(-1);
                 Destroy(this.gameObject);
             }
         }

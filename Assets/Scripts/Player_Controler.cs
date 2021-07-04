@@ -43,7 +43,8 @@ public class Player_Controler : MonoBehaviour
     bool isColliding = false;
 
     //Envo
-    public bool haveSecretKey = false;
+    bool haveSecretKey = false;
+    int secretKeys = 0;
 
     void Awake()
     {
@@ -67,6 +68,7 @@ public class Player_Controler : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(pos);
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             Destroy(gameObject);
@@ -335,13 +337,13 @@ public class Player_Controler : MonoBehaviour
     {
         return maxHealthPoints;
     }
-    public void ChangeSecretKey()
+    public void ChangeSecretKey(int value)
     {
-        haveSecretKey = !haveSecretKey;
+        secretKeys += value;
     }
-    public bool GetSecretKey()
+    public int GetSecretKey()
     {
-        return haveSecretKey;
+        return secretKeys;
     }
     public void ChangeDamage(int value)
     {
