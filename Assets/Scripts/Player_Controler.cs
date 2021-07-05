@@ -11,6 +11,8 @@ public class Player_Controler : MonoBehaviour
     //Sprite and animations
     [SerializeField]SpriteRenderer sprite;
     [SerializeField]Animator playerAnimator;
+    [SerializeField] GameObject jumpFadeSprite;
+    Quaternion jumpFadeSpriteRotation = new Quaternion();
 
     //Movement
     float horizontalInput;
@@ -20,9 +22,12 @@ public class Player_Controler : MonoBehaviour
     Rigidbody2D rb;
     bool isGrounded;
     bool isPreparingToJump = false;
-    int dir;
+    int dir = 1;
     RaycastHit2D ray, rayHead;
     Collider2D collider;
+    int dashLenght = 3;
+    bool canDash = true;
+    [SerializeField] ParticleSystem dashLeft, dashRight;
 
     //Stats
     [SerializeField]int healthPoints = 3;
@@ -40,11 +45,14 @@ public class Player_Controler : MonoBehaviour
 
     //TakingDamage
     bool canTakeDamage = true;
-    bool isColliding = false;
+    public bool isColliding = false;
 
     //Envo
     bool haveSecretKey = false;
     int secretKeys = 0;
+
+    //Unlocks
+    public bool isDashUnlocked = false;
 
     void Awake()
     {
@@ -68,7 +76,6 @@ public class Player_Controler : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(pos);
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             Destroy(gameObject);
@@ -180,10 +187,39 @@ public class Player_Controler : MonoBehaviour
 
     void Dash()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isDashUnlocked==true)
         {
-            Debug.Log("Dashing");
-            rb.AddForce(new Vector2(1000 * dir, 0));
+            int layerMask = ~LayerMask.GetMask("Player");
+            ray = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.45f), new Vector2(dir,0 ), dashLenght, layerMask);
+            rayHead = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 0.45f), new Vector2(dir, 0), dashLenght, layerMask);
+            Debug.Log(ray.collider);
+            if (ray.collider == null && rayHead.collider == null && canDash == true)
+            {
+                if (dir < 0)
+                {
+                    jumpFadeSpriteRotation.Set(0, 180, 0, 1);
+                }
+                else
+                {
+                    jumpFadeSpriteRotation.Set(0, 0, 0, 1);
+                }
+                Instantiate(jumpFadeSprite, transform.position, jumpFadeSpriteRotation);
+                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght / 2 * dir, transform.position.y), jumpFadeSpriteRotation);
+                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght / 3 * dir + dashLenght / 2 * dir, transform.position.y), jumpFadeSpriteRotation);
+
+                gameObject.transform.Translate(new Vector2(dashLenght * dir, 0));
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y/2);
+                if (dir > 0)
+                {
+                    dashRight.Play();
+                }
+                else
+                {
+                    dashLeft.Play();
+                }
+                canDash = false;
+                StartCoroutine(dashCooldown());
+            } 
         }
     }
     void Attack()
@@ -277,6 +313,7 @@ public class Player_Controler : MonoBehaviour
                 ChangeHealth(-1);
             }
             isColliding = true;
+            StartCoroutine(StunTime(0.2f));
         }
         if (collision.gameObject.CompareTag("Death_Bringer"))
         {
@@ -322,6 +359,7 @@ public class Player_Controler : MonoBehaviour
                 rb.velocity=new Vector2(-7, 0);
             }
             isColliding = true;
+            StartCoroutine(StunTime(0.2f));
         }
         if(collision.gameObject.CompareTag("Spike"))
         {
@@ -361,6 +399,10 @@ public class Player_Controler : MonoBehaviour
     {
         Destroy(gameObject);
     }
+    public void UnlockDash()
+    {
+        isDashUnlocked = true;
+    }
     IEnumerator TakeDamage()
     {
         yield return new WaitForSeconds(0.5f);
@@ -379,9 +421,14 @@ public class Player_Controler : MonoBehaviour
         yield return new WaitForSeconds(0.517f);
         sprite.enabled = false;
     }
+    IEnumerator dashCooldown()
+    {
+        yield return new WaitForSeconds(2f);
+        canDash = true;
+    }
     public IEnumerator StunTime(float time)
     {
         yield return new WaitForSeconds(time);
-        ChangeCollision();
+        isColliding = false;
     }
 }

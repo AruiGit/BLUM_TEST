@@ -6,15 +6,16 @@ using UnityEngine.UI;
 public class Death_Bringer : Enemy
 {
     bool attackHitted = false;
-    int dir;
+    public int dir;
     public bool canAttack = true;
     public GameObject spellPrefab;
     bool isCasting = false;
-    int stamina = 5;
+    int stamina = 1;
     int maxStamina;
     public ParticleSystem particle;
     bool isRegenerating = false;
     Vector2 tempPlayerPosition;
+    Vector2 particleLocation;
 
     //UI
     [SerializeField]Slider staminaSlider;
@@ -29,10 +30,15 @@ public class Death_Bringer : Enemy
         finishDistance = 2f;
         maxStamina = stamina;
         staminaSlider.maxValue = maxStamina;
+        particleLocation = particle.transform.localPosition;
     }
 
     protected override void Update()
     {
+        if (player == null)
+        {
+            player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        }
         UpdateUI();
         if (healthPoints > 0 && playerSeen == false)
         {
@@ -56,6 +62,7 @@ public class Death_Bringer : Enemy
                 enemyAnimator.SetBool("isWalking", false);
                 isRegenerating = true;
             }
+            AttackHit();
         }
         else
         {
@@ -66,13 +73,14 @@ public class Death_Bringer : Enemy
                 isPlaying = true;
                 dyingSound.Play();
                 rb.gravityScale = 0;
+                
                 foreach (Collider2D col in enemyColliders)
                 {
                     col.enabled = false;
                 }
             }
             rb.velocity = new Vector2(0, 0);
-            
+            player.UnlockDash();
             StartCoroutine(DeathTimer(0.767f));
         }
         
@@ -85,7 +93,7 @@ public class Death_Bringer : Enemy
         {
             canAttack = false;
             canMove = false;
-            StartCoroutine(Attacking(0.767f, 1.5f));
+            StartCoroutine(Attacking(0.8f, 1.5f));
             if (isFlipped == true)
             {
                 dir = -1;
@@ -98,22 +106,33 @@ public class Death_Bringer : Enemy
             }
             if (stamina == 1)
             {
-                particle.transform.localPosition = new Vector2(particle.transform.localPosition.x * dir, particle.transform.localPosition.y);
+                if (dir < 0)
+                {
+                    particle.transform.localPosition = new Vector2(-particleLocation.x, particle.transform.localPosition.y);
+                }
+                else
+                {
+                    particle.transform.localPosition = new Vector2(particleLocation.x, particle.transform.localPosition.y);
+                }
+                
                 StartCoroutine(ActivateParticle());
             }
             enemyAnimator.SetTrigger("isAttacking");
             stamina--;
         }
+        
+        
+    }
+    void AttackHit()
+    {
         if (attackHitted == true)
         {
             player.ChangeCollision();
-            StartCoroutine(player.StunTime(1f));
             player.TakeDamage(damage, dir * 2);
             attackHitted = false;
+            StartCoroutine(player.StunTime(0.5f));
         }
-        
     }
-
     void Cast()
     {
         if (Mathf.Abs(player.transform.position.x - transform.position.x) < 6 && player.transform.position.y - transform.position.y > 3 && canAttack == true && stamina > 0)

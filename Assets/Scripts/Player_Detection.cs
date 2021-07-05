@@ -16,7 +16,7 @@ public class Player_Detection : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             player = collision.GetComponent<Player_Controler>();
-            enemy.PlayerDetection(true, player);
+            enemy.PlayerDetection(true);
         }
     }
 
