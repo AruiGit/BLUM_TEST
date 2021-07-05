@@ -10,7 +10,7 @@ public class Death_Bringer : Enemy
     public bool canAttack = true;
     public GameObject spellPrefab;
     bool isCasting = false;
-    int stamina = 1;
+    int stamina = 3;
     int maxStamina;
     public ParticleSystem particle;
     bool isRegenerating = false;

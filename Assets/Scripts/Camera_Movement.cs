@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Camera_Movement : MonoBehaviour
 {
     Transform targetPosition;
-    float cameraSpeed = 10f;
+    float cameraSpeed = 4f;
     void Start()
     {
         targetPosition = GameObject.Find("Player").GetComponent<Transform>();
@@ -18,9 +16,8 @@ public class Camera_Movement : MonoBehaviour
         {
             targetPosition = GameObject.Find("Player").GetComponent<Transform>();
         }
-       // targetPosition.position = new Vector3(targetPosition.position.x, targetPosition.position.y, -20);
 
-        Vector3 smoothPosition = Vector2.Lerp(transform.position, targetPosition.position, cameraSpeed * Time.deltaTime);
+        Vector2 smoothPosition = Vector2.Lerp((Vector2)transform.position, (Vector2)targetPosition.position, cameraSpeed * Time.deltaTime);
         transform.position = smoothPosition;
     }
 }

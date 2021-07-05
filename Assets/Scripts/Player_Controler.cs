@@ -11,7 +11,7 @@ public class Player_Controler : MonoBehaviour
     //Sprite and animations
     [SerializeField]SpriteRenderer sprite;
     [SerializeField]Animator playerAnimator;
-    [SerializeField] GameObject jumpFadeSprite;
+    [SerializeField]GameObject jumpFadeSprite;
     Quaternion jumpFadeSpriteRotation = new Quaternion();
 
     //Movement
@@ -27,7 +27,7 @@ public class Player_Controler : MonoBehaviour
     Collider2D collider;
     int dashLenght = 3;
     bool canDash = true;
-    [SerializeField] ParticleSystem dashLeft, dashRight;
+    [SerializeField] ParticleSystem jumpParticle;
 
     //Stats
     [SerializeField]int healthPoints = 3;
@@ -147,6 +147,7 @@ public class Player_Controler : MonoBehaviour
         {
             if (Input.GetKeyUp(KeyCode.Space))
             {
+                jumpParticle.Play();
                 rb.velocity = new Vector2(rb.velocity.x, jumpHight);
                 playerAnimator.ResetTrigger("prepToJump");
                 playerAnimator.SetBool("isJumping", true);
@@ -175,7 +176,7 @@ public class Player_Controler : MonoBehaviour
             isPreparingToJump = false;
         }
 
-        if (rb.velocity.y < -0.2f)
+        if (rb.velocity.y < -1f)
         {
             playerAnimator.SetBool("isFalling", true);
         }
@@ -209,14 +210,6 @@ public class Player_Controler : MonoBehaviour
 
                 gameObject.transform.Translate(new Vector2(dashLenght * dir, 0));
                 rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y/2);
-                if (dir > 0)
-                {
-                    dashRight.Play();
-                }
-                else
-                {
-                    dashLeft.Play();
-                }
                 canDash = false;
                 StartCoroutine(dashCooldown());
             } 

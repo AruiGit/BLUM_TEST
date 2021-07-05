@@ -14,7 +14,6 @@ public class Enemy : MonoBehaviour
     protected bool canMove = true;
     protected bool canTakeDamage = true;
 
-
     protected bool isPlaying = false;
     protected AudioSource dyingSound;
     protected Collider2D[] enemyColliders;
