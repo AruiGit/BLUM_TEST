@@ -33,7 +33,7 @@ public class Player_Controler : MonoBehaviour
     [SerializeField]int healthPoints = 3;
     int maxHealthPoints;
     int money = 540;
-    public int damage = 1;
+    int damage = 1;
 
     //Attack
     [SerializeField]Transform attackPosition;
@@ -45,14 +45,14 @@ public class Player_Controler : MonoBehaviour
 
     //TakingDamage
     bool canTakeDamage = true;
-    public bool isColliding = false;
+    bool isColliding = false;
 
     //Envo
-    public int secretKeys = 0;
+    int secretKeys = 0;
     Camera_Movement camera;
 
     //Unlocks
-    public bool isDashUnlocked = false;
+    bool isDashUnlocked = false;
 
     void Awake()
     {
