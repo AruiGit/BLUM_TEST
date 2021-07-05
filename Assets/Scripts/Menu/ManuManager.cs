@@ -7,12 +7,16 @@ public class ManuManager : MonoBehaviour
 {
     public Animator anim;
     AsyncOperation async;
+    Player_Controler player;
 
 
     private void Start()
     {
         async = SceneManager.LoadSceneAsync(0);
         async.allowSceneActivation = false;
+
+        player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        player.enabled = false;
     }
     public void StartGame()
     {
@@ -33,7 +37,7 @@ public class ManuManager : MonoBehaviour
     public void LoadGame()
     {
         Debug.Log("Tutaj za³aduje gre");
-        //SceneManager.LoadScene(loadedID);
+        player.LoadPlayer();
     }
 
     public void ExitGame()

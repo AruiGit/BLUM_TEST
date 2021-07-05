@@ -33,7 +33,7 @@ public class Player_Controler : MonoBehaviour
     [SerializeField]int healthPoints = 3;
     int maxHealthPoints;
     int money = 540;
-    int damage = 1;
+    public int damage = 1;
 
     //Attack
     [SerializeField]Transform attackPosition;
@@ -48,8 +48,8 @@ public class Player_Controler : MonoBehaviour
     public bool isColliding = false;
 
     //Envo
-    bool haveSecretKey = false;
-    int secretKeys = 0;
+    public int secretKeys = 0;
+    Camera_Movement camera;
 
     //Unlocks
     public bool isDashUnlocked = false;
@@ -72,13 +72,21 @@ public class Player_Controler : MonoBehaviour
         maxHealthPoints = healthPoints;
         attackSound = GetComponent<AudioSource>();
         collider = GetComponent<Collider2D>();
+        camera = GameObject.Find("Main Camera").GetComponent<Camera_Movement>();
     }
-
     void Update()
     {
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            gameObject.SetActive(true);
+        }
+        if (camera == null)
+        {
+            camera = GameObject.Find("Main Camera").GetComponent<Camera_Movement>();
         }
 
         if (isDead == false)
@@ -98,39 +106,40 @@ public class Player_Controler : MonoBehaviour
             rb.gravityScale = 0;
         }
     }
+    #region Movement
     void Movement()
     {
-        if (isPreparingToJump == false && isColliding==false)
+        if (isPreparingToJump == false && isColliding == false)
         {
             horizontalInput = Input.GetAxis("Horizontal");
             Vector2 direction = new Vector2(horizontalInput, 0);
             playerAnimator.SetBool("isRuning", true);
-            ray = Physics2D.Raycast(new Vector2(transform.position.x,transform.position.y-0.45f), direction, 0.6f, LayerMask.GetMask("Map"));
+            ray = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.45f), direction, 0.6f, LayerMask.GetMask("Map"));
             rayHead = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 0.45f), direction, 0.6f, LayerMask.GetMask("Map"));
 
-            if (ray.collider!= null || rayHead.collider != null)
+            if (ray.collider != null || rayHead.collider != null)
             {
                 rb.velocity = new Vector2(0, rb.velocity.y);
                 return;
             }
-            if (horizontalInput != 0) 
+            if (horizontalInput != 0)
             {
-                 rb.velocity= new Vector2 (horizontalInput * speed,rb.velocity.y);
+                rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
             }
             if (horizontalInput < 0 && isAttacking == false)
             {
                 sprite.flipX = true;
                 playerAnimator.SetBool("isFlipped", true);
-                attackPosition.localPosition =new Vector2(-0.135f, 0);
+                attackPosition.localPosition = new Vector2(-0.135f, 0);
                 dir = -1;
             }
-            else if(horizontalInput>0 && isAttacking == false)
+            else if (horizontalInput > 0 && isAttacking == false)
             {
                 playerAnimator.SetBool("isFlipped", false);
                 sprite.flipX = false;
                 attackPosition.localPosition = new Vector2(0.135f, 0);
                 dir = 1;
-            } 
+            }
         }
         if (horizontalInput == 0)
         {
@@ -185,13 +194,12 @@ public class Player_Controler : MonoBehaviour
             playerAnimator.SetBool("isFalling", false);
         }
     }
-
     void Dash()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift) && isDashUnlocked==true)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isDashUnlocked == true)
         {
             int layerMask = ~LayerMask.GetMask("Player");
-            ray = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.45f), new Vector2(dir,0 ), dashLenght, layerMask);
+            ray = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.45f), new Vector2(dir, 0), dashLenght, layerMask);
             rayHead = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 0.45f), new Vector2(dir, 0), dashLenght, layerMask);
             Debug.Log(ray.collider);
             if (ray.collider == null && rayHead.collider == null && canDash == true)
@@ -209,12 +217,14 @@ public class Player_Controler : MonoBehaviour
                 Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght / 3 * dir + dashLenght / 2 * dir, transform.position.y), jumpFadeSpriteRotation);
 
                 gameObject.transform.Translate(new Vector2(dashLenght * dir, 0));
-                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y/2);
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y / 2);
                 canDash = false;
                 StartCoroutine(dashCooldown());
-            } 
+                StartCoroutine(camera.CameraShake(0.1f, 0.2f));
+            }
         }
     }
+    #endregion
     void Attack()
     {
         if (Input.GetKeyDown(KeyCode.E) && canAttack==true)
@@ -253,10 +263,6 @@ public class Player_Controler : MonoBehaviour
     {
         money += value;
     }
-    public int GetCoins()
-    {
-        return money;
-    }
     public void ChangeHealth(int value)
     {
         if (value <= 0)
@@ -276,10 +282,6 @@ public class Player_Controler : MonoBehaviour
         {
             healthPoints = maxHealthPoints;
         }
-    }
-    public int GetHealth()
-    {
-        return healthPoints;
     }
     public void TakeDamage(int value, int direction)
     {
@@ -364,17 +366,9 @@ public class Player_Controler : MonoBehaviour
     {
         maxHealthPoints += value;
     }
-    public int GetMaxHealth()
-    {
-        return maxHealthPoints;
-    }
     public void ChangeSecretKey(int value)
     {
         secretKeys += value;
-    }
-    public int GetSecretKey()
-    {
-        return secretKeys;
     }
     public void ChangeDamage(int value)
     {
@@ -396,6 +390,61 @@ public class Player_Controler : MonoBehaviour
     {
         isDashUnlocked = true;
     }
+    #region GetVariables
+    public int GetSecretKey()
+    {
+        return secretKeys;
+    }
+    public int GetHealth()
+    {
+        return healthPoints;
+    }
+    public int GetCoins()
+    {
+        return money;
+    }
+    public int GetMaxHealth()
+    {
+        return maxHealthPoints;
+    }
+    public int GetDamage()
+    {
+        return damage;
+    }
+    public bool GetDash()
+    {
+        return isDashUnlocked;
+    }
+    public Vector3 GetPlayerPosition()
+    {
+        return gameObject.transform.position;
+    }
+    public int GetActiveSceneID()
+    {
+        return SceneManager.GetActiveScene().buildIndex;
+    }
+    #endregion
+    #region Save/Load
+    public void SavePlayer()
+    {
+        SaveSystem.SavePlayer(this);
+    }
+
+    public void LoadPlayer()
+    {
+        PlayerData data = SaveSystem.LoadPlayer();
+
+        money = data.money;
+        healthPoints = data.health;
+        maxHealthPoints = data.maxHealth;
+        damage = data.damage;
+        secretKeys = data.keys;
+        transform.position = new Vector3(data.position[0], data.position[1], data.position[2]);
+        isDashUnlocked = data.isDashUnlocked;
+        SceneManager.LoadScene(data.sceneID);
+        this.enabled = true;
+    }
+    #endregion
     IEnumerator TakeDamage()
     {
         yield return new WaitForSeconds(0.5f);

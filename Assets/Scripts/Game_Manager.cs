@@ -19,6 +19,10 @@ public class Game_Manager : MonoBehaviour
     //Shop
     [SerializeField]GameObject shop;
 
+    //Menu
+    [SerializeField] GameObject pauseMenu;
+    bool isMenuOpened = false;
+
     private static Game_Manager gameManagerInstance;
 
     void Awake()
@@ -38,6 +42,7 @@ public class Game_Manager : MonoBehaviour
         player = GameObject.Find("Player").GetComponent<Player_Controler>();
         shop.SetActive(false);
         restartGame.enabled = false;
+        pauseMenu.SetActive(false);
         for(int i = 3; i < 6; i++)
         {
             healthBars[i].enabled = false;
@@ -54,7 +59,12 @@ public class Game_Manager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        if (player.enabled == false)
+        {
+            player.enabled = true;
+        }
         UpdateUI();
+        PauseMenu();
         if (player.CheckDeath() == true)
         {
             restartGame.enabled = true;
@@ -78,8 +88,11 @@ public class Game_Manager : MonoBehaviour
     }
     void HearthUiUpdate()
     {
+        for(int i = 0; i < player.GetMaxHealth(); i++)
+        {
+            healthBars[i].enabled = true;
+        }
         
-        healthBars[player.GetMaxHealth()-1].enabled = true;
 
         int playerHealth = player.GetHealth();
 
@@ -93,7 +106,6 @@ public class Game_Manager : MonoBehaviour
         CoinUiUpdate();
         HearthUiUpdate();
     }
-
     void ReloadUI()
     {
         for(int i = 0; i < 3; i++)
@@ -109,5 +121,21 @@ public class Game_Manager : MonoBehaviour
     public void CloseShop()
     {
         shop.SetActive(false);
+    }
+    public void PauseMenu()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isMenuOpened = !isMenuOpened;
+            pauseMenu.SetActive(isMenuOpened);
+        }
+    }
+    public void SavePlayer()
+    {
+        player.SavePlayer();
+    }
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }

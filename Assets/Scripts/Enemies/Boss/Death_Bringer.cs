@@ -16,6 +16,7 @@ public class Death_Bringer : Enemy
     bool isRegenerating = false;
     Vector2 tempPlayerPosition;
     Vector2 particleLocation;
+    public Camera_Movement camera;
 
     //UI
     [SerializeField]Slider staminaSlider;
@@ -106,6 +107,7 @@ public class Death_Bringer : Enemy
             }
             if (stamina == 1)
             {
+                
                 if (dir < 0)
                 {
                     particle.transform.localPosition = new Vector2(-particleLocation.x, particle.transform.localPosition.y);
@@ -206,6 +208,7 @@ public class Death_Bringer : Enemy
     {
         yield return new WaitForSeconds(0.33f);
         particle.Play();
+        StartCoroutine(camera.CameraShake(0.5f, 0.2f));
     }
     IEnumerator Attacking(float attackTime, float attackCooldown)
     {

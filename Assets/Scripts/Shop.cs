@@ -15,6 +15,7 @@ public class Shop : MonoBehaviour
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        SetPrices();
         UpdateUI();
         startDmgPrice = DmgPrice;
         startHpPrice = HpPrice;
@@ -29,6 +30,30 @@ public class Shop : MonoBehaviour
         }
     }
 
+    void SetPrices()
+    {
+        if (player.GetMaxHealth() > 3)
+        {
+            if (player.GetMaxHealth() == 6)
+            {
+                HP_UP.SetActive(false);
+            }
+            for (int i = 3; i < player.GetMaxHealth(); i++)
+            {
+                HpPrice = PriceUpdate(HpPrice);
+            }
+        }
+
+        for(int i = 1; i < player.GetDamage(); i++)
+        {
+            DmgPrice = PriceUpdate(DmgPrice);
+        }
+
+        for(int i = 0; i < player.GetSecretKey(); i++)
+        {
+            KeyPrice = PriceUpdate(KeyPrice);
+        }
+    }
 
     public void BuyHPUp()
     {
