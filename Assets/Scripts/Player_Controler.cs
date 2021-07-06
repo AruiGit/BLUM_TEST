@@ -30,7 +30,7 @@ public class Player_Controler : MonoBehaviour
     //Dash
     float dashLenght = 3;
     bool canDash = true;
-    [SerializeField] ParticleSystem jumpParticle;
+    [SerializeField]ParticleSystem jumpParticle;
 
     //Stats
     [SerializeField]int healthPoints = 3;
@@ -40,7 +40,7 @@ public class Player_Controler : MonoBehaviour
 
     //Attack
     [SerializeField]Transform attackPosition;
-    [SerializeField] float attackRange = 0.5f;
+    [SerializeField]float attackRange = 0.5f;
     bool canAttack = true;
     bool isAttacking = false;
     bool damageDealt = false;
@@ -52,13 +52,14 @@ public class Player_Controler : MonoBehaviour
 
     //Envo
     int secretKeys = 0;
-    Camera_Movement camera;
+    [SerializeField]Camera_Movement camera;
 
     //Unlocks
     bool isDashUnlocked = true;
 
     void Awake()
     {
+        Debug.Log("im alive!");
         if (playerInstance == null)
         {
             playerInstance = this;
@@ -75,7 +76,6 @@ public class Player_Controler : MonoBehaviour
         maxHealthPoints = healthPoints;
         attackSound = GetComponent<AudioSource>();
         collider = GetComponent<Collider2D>();
-        camera = GameObject.Find("Main Camera").GetComponent<Camera_Movement>();
     }
     void Update()
     {

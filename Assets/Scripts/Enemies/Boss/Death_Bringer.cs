@@ -19,7 +19,8 @@ public class Death_Bringer : Enemy
     public Camera_Movement camera;
 
     //UI
-    [SerializeField]Slider staminaSlider;
+    [SerializeField] Slider staminaSlider;
+    [SerializeField] Boss_Area bossArea;
 
     protected override void Start()
     {
@@ -70,6 +71,7 @@ public class Death_Bringer : Enemy
             
             if (isPlaying == false)
             {
+                bossArea.BossDead();
                 enemyAnimator.SetTrigger("isDead");
                 isPlaying = true;
                 dyingSound.Play();

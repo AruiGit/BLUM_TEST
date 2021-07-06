@@ -13,8 +13,9 @@ public class Game_Manager : MonoBehaviour
     [SerializeField] Sprite emptyHeart;
     [SerializeField] Text restartGame;
 
-    Player_Controler player;
+    [SerializeField] Player_Controler currentPlayer;
     [SerializeField] GameObject playerPrefab;
+    [SerializeField] GameObject spawnedPlayer;
 
     //Shop
     [SerializeField]GameObject shop;
@@ -39,7 +40,6 @@ public class Game_Manager : MonoBehaviour
     }
     void Start()
     {
-        player = GameObject.Find("Player").GetComponent<Player_Controler>();
         shop.SetActive(false);
         restartGame.enabled = false;
         pauseMenu.SetActive(false);
@@ -47,30 +47,32 @@ public class Game_Manager : MonoBehaviour
         {
             healthBars[i].enabled = false;
         }
+        currentPlayer = GameObject.Find("Player").GetComponent<Player_Controler>();
+       
         
     }
     void Update()
     {
-        if (player == null)
+        if (currentPlayer==null)
         {
-            player = GameObject.Find("Player").GetComponent<Player_Controler>();
+            currentPlayer = GameObject.Find("Player").GetComponent<Player_Controler>();
         }
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             Destroy(gameObject);
         }
-        if (player.enabled == false)
+        if (currentPlayer.enabled == false)
         {
-            player.enabled = true;
+            currentPlayer.enabled = true;
         }
         UpdateUI();
         PauseMenu();
-        if (player.CheckDeath() == true)
+        if (currentPlayer.CheckDeath() == true)
         {
             restartGame.enabled = true;
             if (Input.GetKeyDown(KeyCode.R))
             {
-                player.DestroyPlayer();
+                currentPlayer.DestroyPlayer();
                 Instantiate(playerPrefab);
                 ReloadUI();
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -84,19 +86,19 @@ public class Game_Manager : MonoBehaviour
 
     void CoinUiUpdate()
     {
-        cointText.text = "Coins: " + player.Coins;
+        cointText.text = "Coins: " + currentPlayer.Coins;
     }
     void HearthUiUpdate()
     {
-        for(int i = 0; i < player.MaxHealthPoints; i++)
+        for(int i = 0; i < currentPlayer.MaxHealthPoints; i++)
         {
             healthBars[i].enabled = true;
         }
 
 
-        int playerHealth = player.HealthPoints;
+        int playerHealth = currentPlayer.HealthPoints;
 
-        for (int i = 0; i < player.MaxHealthPoints; ++i)
+        for (int i = 0; i < currentPlayer.MaxHealthPoints; ++i)
         {
             healthBars[i].sprite = playerHealth <= i ? emptyHeart : fullHeart;
         }
@@ -132,10 +134,15 @@ public class Game_Manager : MonoBehaviour
     }
     public void SavePlayer()
     {
-        player.SavePlayer();
+        currentPlayer.SavePlayer();
     }
     public void ExitGame()
     {
         Application.Quit();
+    }
+    public void GetPlayer(Player_Controler player)
+    {
+        currentPlayer = player;
+        Debug.Log(player);
     }
 }
