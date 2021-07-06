@@ -4994,8 +4994,7 @@ MonoBehaviour:
   healthPoints: 3
   attackPosition: {fileID: 1027314582734571491}
   attackRange: 0.5
-  isColliding: 0
-  isDashUnlocked: 1
+  camera: {fileID: 0}
 --- !u!50 &1027314583285857688
 Rigidbody2D:
   serializedVersion: 4
@@ -5155,6 +5154,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-1326153966844076599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1027314583285857684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adc7991effd015a49a554e90e0c3c2e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7120488928476559320
 GameObject:
   m_ObjectHideFlags: 0
