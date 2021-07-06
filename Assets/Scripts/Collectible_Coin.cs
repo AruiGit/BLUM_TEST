@@ -8,6 +8,6 @@ public class Collectible_Coin : Collectible
     {
        base.OnCollect(player);
         StartCoroutine(AnimationTime(0.2f));
-        player.AddCoints(value);
+        player.Coins = value;
     }
 }

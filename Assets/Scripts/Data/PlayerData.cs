@@ -16,16 +16,16 @@ public class PlayerData
 
     public PlayerData(Player_Controler player)
     {
-        money = player.GetCoins();
-        health = player.GetHealth();
-        maxHealth = player.GetMaxHealth();
-        damage = player.GetDamage();
-        isDashUnlocked = player.GetDash();
+        money = player.Coins;
+        health = player.HealthPoints;
+        maxHealth = player.MaxHealthPoints;
+        damage = player.Damage;
+        isDashUnlocked = player.IsDashUnlocked;
         position = new float[3];
         position[0] = player.GetPlayerPosition().x;
         position[1] = player.GetPlayerPosition().y;
         position[2] = player.GetPlayerPosition().z;
         sceneID = player.GetActiveSceneID();
-        keys = player.GetSecretKey();
+        keys = player.SecretKeys;
     }
 }

@@ -25,7 +25,7 @@ public class Player_Controler : MonoBehaviour
     int dir = 1;
     RaycastHit2D ray, rayHead;
     Collider2D collider;
-    int dashLenght = 3;
+    float dashLenght = 3;
     bool canDash = true;
     [SerializeField] ParticleSystem jumpParticle;
 
@@ -52,7 +52,7 @@ public class Player_Controler : MonoBehaviour
     Camera_Movement camera;
 
     //Unlocks
-    bool isDashUnlocked = false;
+    bool isDashUnlocked = true;
 
     void Awake()
     {
@@ -206,15 +206,19 @@ public class Player_Controler : MonoBehaviour
             {
                 if (dir < 0)
                 {
-                    jumpFadeSpriteRotation.Set(0, 180, 0, 1);
+                    jumpFadeSpriteRotation.Set(0, 180, 0, 0);
                 }
                 else
                 {
                     jumpFadeSpriteRotation.Set(0, 0, 0, 1);
                 }
-                Instantiate(jumpFadeSprite, transform.position, jumpFadeSpriteRotation);
-                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght / 2 * dir, transform.position.y), jumpFadeSpriteRotation);
-                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght / 3 * dir + dashLenght / 2 * dir, transform.position.y), jumpFadeSpriteRotation);
+
+                /*Instantiate(jumpFadeSprite, new Vector2(transform.position.x, transform.position.y), jumpFadeSpriteRotation);
+                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght / 4 * dir, transform.position.y), jumpFadeSpriteRotation);
+                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght* 2 / 4 * dir, transform.position.y), jumpFadeSpriteRotation);
+                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght * 3 / 4 * dir, transform.position.y), jumpFadeSpriteRotation);
+                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght * dir, transform.position.y), jumpFadeSpriteRotation);*/
+                StartCoroutine(SpawnDashFade(transform.position));
 
                 gameObject.transform.Translate(new Vector2(dashLenght * dir, 0));
                 rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y / 2);
@@ -259,35 +263,12 @@ public class Player_Controler : MonoBehaviour
         }
         Gizmos.DrawWireSphere(attackPosition.position, attackRange);
     }
-    public void AddCoints(int value)
-    {
-        money += value;
-    }
-    public void ChangeHealth(int value)
-    {
-        if (value <= 0)
-        {
-            if (canTakeDamage == true)
-            {
-                healthPoints += value;
-                canTakeDamage = false;
-                StartCoroutine(TakeDamage());
-            }
-        }
-        else
-        {
-            healthPoints += value;
-        }
-        if (healthPoints > maxHealthPoints)
-        {
-            healthPoints = maxHealthPoints;
-        }
-    }
     public void TakeDamage(int value, int direction)
     {
-            ChangeHealth(-value);
-            rb.AddForce(new Vector2(125 * direction, 0));
+        HealthPoints = -value;
+        rb.AddForce(new Vector2(125 * direction, 0));
     }
+    #region Collision
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -300,12 +281,12 @@ public class Player_Controler : MonoBehaviour
             {
                 collision.gameObject.GetComponent<Shroom>().CrushDamage(damage);
                 rb.velocity = new Vector2(rb.velocity.x, 7);
-                ChangeHealth(0);
+                HealthPoints = 0;
             }
             else
             {
                 rb.velocity = new Vector2(rb.velocity.x, 7);
-                ChangeHealth(-1);
+                HealthPoints = -1;
             }
             isColliding = true;
             StartCoroutine(StunTime(0.2f));
@@ -313,7 +294,7 @@ public class Player_Controler : MonoBehaviour
         if (collision.gameObject.CompareTag("Death_Bringer"))
         {
             rb.velocity = new Vector2(rb.velocity.x, 15);
-            ChangeHealth(-1);
+            HealthPoints = -1;
             isColliding = true;
         }
     }
@@ -343,7 +324,7 @@ public class Player_Controler : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Death_Bringer"))
         {
-            ChangeHealth(-1);
+            HealthPoints = -1;
             Vector2 dir = transform.position - collision.transform.position;
             if (dir.x > 0)
             {
@@ -358,62 +339,105 @@ public class Player_Controler : MonoBehaviour
         }
         if(collision.gameObject.CompareTag("Spike"))
         {
-            ChangeHealth(-1);
+            HealthPoints = -1;
             isColliding = true;
         }
-    }
-    public void ChangeMaxHealth(int value)
-    {
-        maxHealthPoints += value;
-    }
-    public void ChangeSecretKey(int value)
-    {
-        secretKeys += value;
-    }
-    public void ChangeDamage(int value)
-    {
-        damage += value;
-    }
-    public bool CheckDeath()
-    {
-        return isDead;
     }
     public void ChangeCollision()
     {
         isColliding = !isColliding;
     }
+    #endregion
+    public bool CheckDeath()
+    {
+        return isDead;
+    }
     public void DestroyPlayer()
     {
         Destroy(gameObject);
     }
-    public void UnlockDash()
+    #region Properties
+    public int SecretKeys
     {
-        isDashUnlocked = true;
+        get
+        {
+            return secretKeys;
+        }
+        set
+        {
+            secretKeys += value;
+        }
     }
-    #region GetVariables
-    public int GetSecretKey()
+    public int HealthPoints
     {
-        return secretKeys;
+        get
+        {
+            return healthPoints;
+        }
+        set 
+        {
+            if (value <= 0)
+            {
+                if (canTakeDamage == true)
+                {
+                    healthPoints += value;
+                    canTakeDamage = false;
+                    StartCoroutine(TakeDamage());
+                }
+            }
+            else
+            {
+                healthPoints += value;
+            }
+            if (healthPoints > maxHealthPoints)
+            {
+                healthPoints = maxHealthPoints;
+            }
+        }
     }
-    public int GetHealth()
+    public int Coins
     {
-        return healthPoints;
+        get 
+        {
+            return money;
+        }
+        set
+        {
+            money += value;
+        }
     }
-    public int GetCoins()
+    public int MaxHealthPoints
     {
-        return money;
+        get
+        {
+            return maxHealthPoints;
+        }
+        set
+        {
+            maxHealthPoints += value;
+        }
     }
-    public int GetMaxHealth()
+    public int Damage
     {
-        return maxHealthPoints;
+        get
+        {
+            return damage;
+        }
+        set
+        {
+            damage += value;
+        }
     }
-    public int GetDamage()
+    public bool IsDashUnlocked
     {
-        return damage;
-    }
-    public bool GetDash()
-    {
-        return isDashUnlocked;
+        get
+        {
+            return isDashUnlocked;
+        }
+        set
+        {
+            isDashUnlocked = value;
+        }
     }
     public Vector3 GetPlayerPosition()
     {
@@ -472,5 +496,18 @@ public class Player_Controler : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         isColliding = false;
+    }
+    IEnumerator SpawnDashFade(Vector3 tempPlayerPos)
+    {
+        yield return new WaitForSeconds(0.05f);
+        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x, tempPlayerPos.y), jumpFadeSpriteRotation);
+        yield return new WaitForSeconds(0.05f);
+        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght / 4 * dir, tempPlayerPos.y), jumpFadeSpriteRotation);
+        yield return new WaitForSeconds(0.05f);
+        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght * 2 / 4 * dir, tempPlayerPos.y), jumpFadeSpriteRotation);
+        yield return new WaitForSeconds(0.05f);
+        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght * 3 / 4 * dir, tempPlayerPos.y), jumpFadeSpriteRotation);
+        yield return new WaitForSeconds(0.05f);
+        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght * dir, tempPlayerPos.y), jumpFadeSpriteRotation);
     }
 }

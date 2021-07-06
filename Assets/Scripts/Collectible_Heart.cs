@@ -9,6 +9,6 @@ public class Collectible_Heart : Collectible
         animator.SetTrigger("pickedHeart");
         base.OnCollect(player);
         StartCoroutine(AnimationTime(0.517f));
-        player.ChangeHealth(1);
+        player.HealthPoints = 1;
     }
 }

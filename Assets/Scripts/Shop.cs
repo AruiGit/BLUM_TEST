@@ -32,24 +32,24 @@ public class Shop : MonoBehaviour
 
     void SetPrices()
     {
-        if (player.GetMaxHealth() > 3)
+        if (player.MaxHealthPoints > 3)
         {
-            if (player.GetMaxHealth() == 6)
+            if (player.MaxHealthPoints == 6)
             {
                 HP_UP.SetActive(false);
             }
-            for (int i = 3; i < player.GetMaxHealth(); i++)
+            for (int i = 3; i < player.MaxHealthPoints; i++)
             {
                 HpPrice = PriceUpdate(HpPrice);
             }
         }
 
-        for(int i = 1; i < player.GetDamage(); i++)
+        for(int i = 1; i < player.Damage; i++)
         {
             DmgPrice = PriceUpdate(DmgPrice);
         }
 
-        for(int i = 0; i < player.GetSecretKey(); i++)
+        for(int i = 0; i < player.SecretKeys; i++)
         {
             KeyPrice = PriceUpdate(KeyPrice);
         }
@@ -57,12 +57,12 @@ public class Shop : MonoBehaviour
 
     public void BuyHPUp()
     {
-        if (player.GetCoins() >= HpPrice)
+        if (player.Coins >= HpPrice)
         {
-            player.AddCoints(-HpPrice);
-            player.ChangeMaxHealth(1);
+            player.Coins = -HpPrice;
+            player.MaxHealthPoints = 1;
             HpPrice= PriceUpdate(HpPrice);
-            if (player.GetMaxHealth() == 6)
+            if (player.MaxHealthPoints == 6)
             {
                 HP_UP.SetActive(false);
             }
@@ -72,10 +72,10 @@ public class Shop : MonoBehaviour
     }
     public void BuySecretKey()
     {
-        if (player.GetCoins() >= KeyPrice)
+        if (player.Coins >= KeyPrice)
         {
-            player.AddCoints(-KeyPrice);
-            player.ChangeSecretKey(1);
+            player.Coins = -KeyPrice;
+            player.SecretKeys = 1;
             KeyPrice=PriceUpdate(KeyPrice);
 
             UpdateUI();
@@ -83,10 +83,10 @@ public class Shop : MonoBehaviour
     }
     public void BuyDamageUP()
     {
-        if (player.GetCoins() >= DmgPrice)
+        if (player.Coins >= DmgPrice)
         {
-            player.AddCoints(-DmgPrice);
-            player.ChangeDamage(1);
+            player.Coins = -DmgPrice;
+            player.Damage = 1;
             DmgPrice = PriceUpdate(DmgPrice);
 
             UpdateUI();

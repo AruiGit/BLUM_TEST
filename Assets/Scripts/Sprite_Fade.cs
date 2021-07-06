@@ -9,10 +9,10 @@ public class Sprite_Fade : MonoBehaviour
     void Start()
     {
         sprite=GetComponent<SpriteRenderer>();
-        StartCoroutine(FadeAway(0, 1));
+        StartCoroutine(FadeAway(0, 0.7f));
     }
 
-   IEnumerator FadeAway(float fadeTo, float fadeTime)
+    public IEnumerator FadeAway(float fadeTo, float fadeTime)
     {
         float alpha = sprite.material.color.a;
         for(float t=0.0f;t<=1.0f;t += Time.deltaTime / fadeTime)

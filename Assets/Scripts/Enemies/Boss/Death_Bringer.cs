@@ -81,7 +81,7 @@ public class Death_Bringer : Enemy
                 }
             }
             rb.velocity = new Vector2(0, 0);
-            player.UnlockDash();
+            player.IsDashUnlocked = true;
             StartCoroutine(DeathTimer(0.767f));
         }
         

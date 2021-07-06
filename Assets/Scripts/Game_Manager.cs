@@ -84,19 +84,19 @@ public class Game_Manager : MonoBehaviour
 
     void CoinUiUpdate()
     {
-        cointText.text = "Coins: " + player.GetCoins();
+        cointText.text = "Coins: " + player.Coins;
     }
     void HearthUiUpdate()
     {
-        for(int i = 0; i < player.GetMaxHealth(); i++)
+        for(int i = 0; i < player.MaxHealthPoints; i++)
         {
             healthBars[i].enabled = true;
         }
-        
 
-        int playerHealth = player.GetHealth();
 
-        for (int i = 0; i < player.GetMaxHealth(); ++i)
+        int playerHealth = player.HealthPoints;
+
+        for (int i = 0; i < player.MaxHealthPoints; ++i)
         {
             healthBars[i].sprite = playerHealth <= i ? emptyHeart : fullHeart;
         }
