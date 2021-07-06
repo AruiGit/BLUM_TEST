@@ -15,16 +15,19 @@ public class Player_Controler : MonoBehaviour
     Quaternion jumpFadeSpriteRotation = new Quaternion();
 
     //Movement
-    float horizontalInput;
-    int speed = 5;
-    float maxJumpHight = 10;
-    float jumpHight;
     Rigidbody2D rb;
+    int speed = 5;
+    int dir = 1;
+    float horizontalInput;
+    float maxJumpHight = 10;
+    float minimumJumpHight = 3f;
+    float jumpHight;
     bool isGrounded;
     bool isPreparingToJump = false;
-    int dir = 1;
     RaycastHit2D ray, rayHead;
     Collider2D collider;
+
+    //Dash
     float dashLenght = 3;
     bool canDash = true;
     [SerializeField] ParticleSystem jumpParticle;
@@ -167,7 +170,7 @@ public class Player_Controler : MonoBehaviour
             if (Input.GetKey(KeyCode.Space))
             {
                 jumpHight += 10 * Time.deltaTime;
-                jumpHight = Mathf.Clamp(jumpHight, 3f, maxJumpHight);
+                jumpHight = Mathf.Clamp(jumpHight, minimumJumpHight, maxJumpHight);
                 playerAnimator.SetTrigger("prepToJump");
                 isPreparingToJump = true;
             }
@@ -212,12 +215,6 @@ public class Player_Controler : MonoBehaviour
                 {
                     jumpFadeSpriteRotation.Set(0, 0, 0, 1);
                 }
-
-                /*Instantiate(jumpFadeSprite, new Vector2(transform.position.x, transform.position.y), jumpFadeSpriteRotation);
-                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght / 4 * dir, transform.position.y), jumpFadeSpriteRotation);
-                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght* 2 / 4 * dir, transform.position.y), jumpFadeSpriteRotation);
-                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght * 3 / 4 * dir, transform.position.y), jumpFadeSpriteRotation);
-                Instantiate(jumpFadeSprite, new Vector2(transform.position.x + dashLenght * dir, transform.position.y), jumpFadeSpriteRotation);*/
                 StartCoroutine(SpawnDashFade(transform.position));
 
                 gameObject.transform.Translate(new Vector2(dashLenght * dir, 0));
@@ -451,12 +448,12 @@ public class Player_Controler : MonoBehaviour
     #region Save/Load
     public void SavePlayer()
     {
-        SaveSystem.SavePlayer(this);
+        Save_System.SavePlayer(this);
     }
 
     public void LoadPlayer()
     {
-        PlayerData data = SaveSystem.LoadPlayer();
+        Player_Data data = Save_System.LoadPlayer();
 
         money = data.money;
         healthPoints = data.health;

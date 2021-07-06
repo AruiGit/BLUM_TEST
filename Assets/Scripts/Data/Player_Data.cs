@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class PlayerData
+public class Player_Data
 {
     public int money;
     public int health;
@@ -14,7 +14,7 @@ public class PlayerData
     public int keys;
     public int sceneID;
 
-    public PlayerData(Player_Controler player)
+    public Player_Data(Player_Controler player)
     {
         money = player.Coins;
         health = player.HealthPoints;

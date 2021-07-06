@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ManuManager : MonoBehaviour
+public class Menu_Manager : MonoBehaviour
 {
     public Animator anim;
     AsyncOperation async;
