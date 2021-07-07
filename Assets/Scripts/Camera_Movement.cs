@@ -6,21 +6,29 @@ public class Camera_Movement : MonoBehaviour
     Transform targetPosition;
     float cameraSpeed = 4f;
     Vector2 offset;
+
+    private void Awake()
+    {
+        GameObject_Manager.instance.camera = this.gameObject;
+    }
     void Start()
     {
-        targetPosition = GameObject.Find("Player").GetComponent<Transform>();
+        targetPosition = GameObject_Manager.instance.player.GetComponent<Transform>();
         offset = new Vector2(0, 0);
     }
-
     void Update()
     {
         if (targetPosition == null)
         {
-            targetPosition = GameObject.Find("Player").GetComponent<Transform>();
+            targetPosition = GameObject_Manager.instance.player.GetComponent<Transform>();
         }
 
         Vector2 smoothPosition = Vector2.Lerp((Vector2)transform.position, (Vector2)targetPosition.position, cameraSpeed * Time.deltaTime);
         transform.position = new Vector2(smoothPosition.x+offset.x, smoothPosition.y+offset.y);
+    }
+    private void OnDestroy()
+    {
+        GameObject_Manager.instance.camera = null;
     }
 
     public IEnumerator CameraShake(float magnitude, float duration)

@@ -69,6 +69,7 @@ public class Player_Controler : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        GameObject_Manager.instance.player = this.gameObject;
     }
     void Start()
     {
@@ -89,7 +90,7 @@ public class Player_Controler : MonoBehaviour
         }
         if (camera == null)
         {
-            camera = GameObject.Find("Main Camera").GetComponent<Camera_Movement>();
+            camera = GameObject_Manager.instance.camera.GetComponent<Camera_Movement>();
         }
 
         if (isDead == false)
@@ -108,6 +109,11 @@ public class Player_Controler : MonoBehaviour
             collider.enabled = false;
             rb.gravityScale = 0;
         }
+    }
+
+    private void OnDestroy()
+    {
+        GameObject_Manager.instance.player = null;
     }
     #region Movement
     void Movement()

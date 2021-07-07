@@ -6,6 +6,9 @@ public class GameObject_Manager : MonoBehaviour
 {
     public static GameObject_Manager instance;
     public List<GameObject> allObjects = new List<GameObject>();
+    public GameObject gameManager;
+    public GameObject player;
+    public GameObject camera;
 
     void Awake()
     {
@@ -13,7 +16,6 @@ public class GameObject_Manager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            Debug.Log("Tworze singletona!");
         }
 
         else

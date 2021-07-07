@@ -39,7 +39,7 @@ public class Death_Bringer : Enemy
     {
         if (player == null)
         {
-            player = GameObject.Find("Player").GetComponent<Player_Controler>();
+           player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
         }
         UpdateUI();
         if (healthPoints > 0 && playerSeen == false)
