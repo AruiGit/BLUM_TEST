@@ -9,11 +9,23 @@ public class Boss_Area : MonoBehaviour
     [SerializeField] AudioSource bossMusic;
     [SerializeField] AudioSource themeMusic;
     bool isBossDead = false;
+
+    private void Awake()
+    {
+        GameObject_Manager.instance.bossArea = this.gameObject;
+    }
     void Start()
     {
         bossUI.SetActive(false);
     }
 
+    private void Update()
+    {
+        if (bossUI == null)
+        {
+            bossUI = GameObject_Manager.instance.bossArea.GetComponentInChildren<GameObject>();
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

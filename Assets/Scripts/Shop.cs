@@ -27,6 +27,11 @@ public class Shop : MonoBehaviour
         if (player == null)
         {
             player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+            if (player.MaxHealthPoints == 6)
+            {
+                HP_UP.SetActive(false);
+            }
+            UpdateUI();
         }
     }
 

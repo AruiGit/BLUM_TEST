@@ -5,6 +5,16 @@ using UnityEngine;
 public class Doors : MonoBehaviour
 {
     Player_Controler player;
+
+    private void Awake()
+    {
+        GameObject_Manager.instance.allDoors.Add(this.gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        GameObject_Manager.instance.allDoors.Remove(this.gameObject);
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         player = collision.GetComponent<Player_Controler>();

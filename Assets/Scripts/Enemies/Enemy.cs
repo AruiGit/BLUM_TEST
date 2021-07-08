@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] Transform[] patrolPoints;
+    public Transform[] patrolPoints;
     int currentPatrolPoint = 0;
     protected float finishDistance = 0.5f;
     protected float movementStep = 2;
@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     protected bool isFlipped;
     protected bool canMove = true;
     protected bool canTakeDamage = true;
+    public int type;
 
     protected bool isPlaying = false;
     protected AudioSource dyingSound;
@@ -31,6 +32,10 @@ public class Enemy : MonoBehaviour
     protected bool playerSeen = false;
     protected Player_Controler player;
 
+    protected virtual void Awake()
+    {
+        GameObject_Manager.instance.allEnemies.Add(this);
+    }
     protected virtual void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
@@ -68,6 +73,10 @@ public class Enemy : MonoBehaviour
             StartCoroutine(DeathTimer(0.5f));
         }
     }
+    protected virtual void OnDestroy()
+    {
+        GameObject_Manager.instance.allEnemies.Remove(this);
+    }
 
     protected virtual void Movement()
     {
@@ -103,7 +112,7 @@ public class Enemy : MonoBehaviour
         if (canTakeDamage == true)
         {
             canTakeDamage = false;
-            healthPoints -= value;
+            HealthPoints = -value;
             rb.AddForce(new Vector2(250 * direction, 0));
             enemyAnimator.SetTrigger("isHit");
             StartCoroutine(TakeDamage());
@@ -133,6 +142,19 @@ public class Enemy : MonoBehaviour
             Instantiate(hearthPrefab, transform.position, Quaternion.identity);
         }
     }
+    #region Properties
+    public int HealthPoints
+    {
+        get
+        {
+            return healthPoints;
+        }
+        set
+        {
+            healthPoints += value;
+        }
+    }
+    #endregion
 
     public void PlayerDetection(bool value, Player_Controler player)
     {

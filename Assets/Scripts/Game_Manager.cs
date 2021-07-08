@@ -78,7 +78,11 @@ public class Game_Manager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.R))
             {
                 currentPlayer.DestroyPlayer();
-                Instantiate(playerPrefab);
+                Player_Controler newPlayer=Instantiate(playerPrefab).GetComponent<Player_Controler>();
+                if (GameObject_Manager.instance.wasGameLoaded == true)
+                {
+                    newPlayer.ReloadPlayer(GameObject_Manager.instance.data);
+                }
                 ReloadUI();
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }

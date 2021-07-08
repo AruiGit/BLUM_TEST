@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 2255380911328751157}
   - component: {fileID: -4816637520266777260}
   - component: {fileID: -3562068748370090057}
-  - component: {fileID: -7836106871034514754}
   m_Layer: 14
   m_Name: Enemy_Mushroom
   m_TagString: Enemy
@@ -267,15 +266,3 @@ MonoBehaviour:
   damage: 1
   coinPrefab: {fileID: 3786742864276722466, guid: 7675ce4ec8da24044b0ef8aad577f77c, type: 3}
   hearthPrefab: {fileID: 8462051259193414479, guid: 15ec00a98e03b034fbc2a3e4c57c21c1, type: 3}
---- !u!114 &-7836106871034514754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2255380911328751147}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adc7991effd015a49a554e90e0c3c2e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
