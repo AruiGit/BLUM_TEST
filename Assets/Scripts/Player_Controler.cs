@@ -93,10 +93,13 @@ public class Player_Controler : MonoBehaviour
             camera = GameObject_Manager.instance.camera.GetComponent<Camera_Movement>();
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
         if (GameObject_Manager.instance.player == null)
         {
             GameObject_Manager.instance.player = this.gameObject;
         }
+=======
+>>>>>>> parent of e66e14e (Save/Load)
 =======
 >>>>>>> parent of e66e14e (Save/Load)
 
