@@ -10,12 +10,12 @@ public static class Save_System
         string path = Application.persistentDataPath + "/save.save";
         FileStream stream = new FileStream(path, FileMode.Create);
 
-        Save_Data save = new Save_Data(GameObject_Manager.instance.allEnemies, player);
-        formatter.Serialize(stream, save);
+        Player_Data data = new Player_Data(player);
+        formatter.Serialize(stream, data);
         stream.Close();
     }
 
-    public static Save_Data LoadPlayer()
+    public static Player_Data LoadPlayer()
     {
         string path = Application.persistentDataPath + "/save.save";
         if (File.Exists(path))
@@ -23,11 +23,10 @@ public static class Save_System
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream stream = new FileStream(path, FileMode.Open);
 
-            Save_Data save = formatter.Deserialize(stream) as Save_Data;
+            Player_Data data = formatter.Deserialize(stream) as Player_Data;
             stream.Close();
-            GameObject_Manager.instance.wasGameLoaded = true;
 
-            return save;
+            return data;
         }
         else
         {

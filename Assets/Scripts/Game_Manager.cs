@@ -37,6 +37,7 @@ public class Game_Manager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        GameObject_Manager.instance.gameManager = this.gameObject;
     }
     void Start()
     {
@@ -55,7 +56,11 @@ public class Game_Manager : MonoBehaviour
     {
         if (currentPlayer==null)
         {
-            currentPlayer = GameObject.Find("Player").GetComponent<Player_Controler>();
+            currentPlayer = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+        }
+        if (GameObject_Manager.instance.gameManager == null)
+        {
+            GameObject_Manager.instance.gameManager = this.gameObject;
         }
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
@@ -73,11 +78,7 @@ public class Game_Manager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.R))
             {
                 currentPlayer.DestroyPlayer();
-                Player_Controler newPlayer=Instantiate(playerPrefab).GetComponent<Player_Controler>();
-                if (GameObject_Manager.instance.wasGameLoaded == true)
-                {
-                    newPlayer.ReloadPlayer(GameObject_Manager.instance.data);
-                }
+                Instantiate(playerPrefab);
                 ReloadUI();
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
@@ -86,6 +87,10 @@ public class Game_Manager : MonoBehaviour
         {
             restartGame.enabled = false;
         }
+    }
+    private void OnDestroy()
+    {
+        GameObject_Manager.instance.gameManager = null;
     }
 
     void CoinUiUpdate()

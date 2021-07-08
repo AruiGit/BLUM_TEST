@@ -15,10 +15,7 @@ public class Collectible : MonoBehaviour
         collider = GetComponent<CircleCollider2D>();
         collectSound = GetComponent<AudioSource>();
     }
-    protected virtual void Awake()
-    {
-        GameObject_Manager.instance.allCollectibles.Add(this.gameObject);
-    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -26,10 +23,6 @@ public class Collectible : MonoBehaviour
             collectSound.Play();
             OnCollect(collision.GetComponent<Player_Controler>());
         }
-    }
-    private void OnDestroy()
-    {
-        GameObject_Manager.instance.allCollectibles.Remove(this.gameObject);
     }
 
     public virtual void OnCollect(Player_Controler player)

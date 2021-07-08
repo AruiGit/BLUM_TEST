@@ -39,12 +39,7 @@ public class Death_Bringer : Enemy
     {
         if (player == null)
         {
-            player = GameObject.Find("Player").GetComponent<Player_Controler>();
-        }
-        if (bossArea == null)
-        {
-            bossArea = GameObject_Manager.instance.bossArea.GetComponent<Boss_Area>();
-            staminaSlider = GameObject_Manager.instance.bossArea.GetComponentInChildren<Slider>();
+           player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
         }
         UpdateUI();
         if (healthPoints > 0 && playerSeen == false)

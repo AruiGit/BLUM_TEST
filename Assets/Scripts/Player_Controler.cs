@@ -34,7 +34,7 @@ public class Player_Controler : MonoBehaviour
 
     //Stats
     [SerializeField]int healthPoints = 3;
-    public int maxHealthPoints = 3;
+    int maxHealthPoints;
     int money = 540;
     int damage = 1;
 
@@ -69,10 +69,12 @@ public class Player_Controler : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        GameObject_Manager.instance.player = this.gameObject;
     }
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        maxHealthPoints = healthPoints;
         attackSound = GetComponent<AudioSource>();
         collider = GetComponent<Collider2D>();
     }
@@ -88,12 +90,13 @@ public class Player_Controler : MonoBehaviour
         }
         if (camera == null)
         {
-            camera = GameObject.Find("Main Camera").GetComponent<Camera_Movement>();
+            camera = GameObject_Manager.instance.camera.GetComponent<Camera_Movement>();
         }
         if (GameObject_Manager.instance.player == null)
         {
             GameObject_Manager.instance.player = this.gameObject;
         }
+
         if (isDead == false)
         {
             Movement();
@@ -110,6 +113,11 @@ public class Player_Controler : MonoBehaviour
             collider.enabled = false;
             rb.gravityScale = 0;
         }
+    }
+
+    private void OnDestroy()
+    {
+        GameObject_Manager.instance.player = null;
     }
     #region Movement
     void Movement()
@@ -353,7 +361,6 @@ public class Player_Controler : MonoBehaviour
     }
     public void DestroyPlayer()
     {
-        playerInstance = null;
         Destroy(gameObject);
     }
     #region Properties
@@ -456,23 +463,17 @@ public class Player_Controler : MonoBehaviour
 
     public void LoadPlayer()
     {
-        Save_Data data = Save_System.LoadPlayer();
+        Player_Data data = Save_System.LoadPlayer();
 
-        GameObject_Manager.instance.data = data;
-        ReloadPlayer(data);
-        SceneManager.LoadScene(data.playerToSave.sceneID);
+        money = data.money;
+        healthPoints = data.health;
+        maxHealthPoints = data.maxHealth;
+        damage = data.damage;
+        secretKeys = data.keys;
+        transform.position = new Vector3(data.position[0], data.position[1], data.position[2]);
+        isDashUnlocked = data.isDashUnlocked;
+        SceneManager.LoadScene(data.sceneID);
         this.enabled = true;
-    }
-
-    public void ReloadPlayer(Save_Data data)
-    {
-        money = data.playerToSave.money;
-        healthPoints = data.playerToSave.health;
-        maxHealthPoints = data.playerToSave.maxHealth;
-        damage = data.playerToSave.damage;
-        secretKeys = data.playerToSave.keys;
-        transform.position = new Vector3(data.playerToSave.position[0], data.playerToSave.position[1], data.playerToSave.position[2]);
-        isDashUnlocked = data.playerToSave.isDashUnlocked;
     }
     #endregion
     IEnumerator TakeDamage()
