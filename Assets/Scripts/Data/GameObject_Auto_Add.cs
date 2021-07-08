@@ -6,7 +6,16 @@ public class GameObject_Auto_Add : MonoBehaviour
 {
     void Awake()
     {
-        GameObject_Manager.instance.allObjects.Add(gameObject);
+        if (gameObject.name == "Game_Manager")
+        {
+            GameObject_Manager.instance.allObjects.Insert(0, gameObject);
+        }
+        else
+        {
+            GameObject_Manager.instance.allObjects.Add(gameObject);
+        }
+        
+        Debug.Log(gameObject + " dodane do listy");
     }
 
     void OnDestroy()

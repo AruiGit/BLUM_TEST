@@ -14,7 +14,7 @@ public class Shop : MonoBehaviour
     int startHpPrice, startDmgPrice, startKeyPrice;
     void Start()
     {
-        player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+        player = GameObject.Find("Player").GetComponent<Player_Controler>();
         SetPrices();
         UpdateUI();
         startDmgPrice = DmgPrice;
@@ -26,7 +26,7 @@ public class Shop : MonoBehaviour
     {
         if (player == null)
         {
-            player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+            player = GameObject.Find("Player").GetComponent<Player_Controler>();
         }
     }
 

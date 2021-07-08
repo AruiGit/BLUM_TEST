@@ -37,7 +37,6 @@ public class Game_Manager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        GameObject_Manager.instance.gameManager = this.gameObject;
     }
     void Start()
     {
@@ -56,11 +55,7 @@ public class Game_Manager : MonoBehaviour
     {
         if (currentPlayer==null)
         {
-            currentPlayer = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
-        }
-        if (GameObject_Manager.instance.gameManager == null)
-        {
-            GameObject_Manager.instance.gameManager = this.gameObject;
+            currentPlayer = GameObject.Find("Player").GetComponent<Player_Controler>();
         }
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
@@ -87,10 +82,6 @@ public class Game_Manager : MonoBehaviour
         {
             restartGame.enabled = false;
         }
-    }
-    private void OnDestroy()
-    {
-        GameObject_Manager.instance.gameManager = null;
     }
 
     void CoinUiUpdate()

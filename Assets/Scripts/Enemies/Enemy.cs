@@ -38,13 +38,13 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         dyingSound = GetComponent<AudioSource>();
         enemyColliders = GetComponents<Collider2D>();
-        player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+        player = GameObject.Find("Player").GetComponent<Player_Controler>();
     }
     protected virtual void Update()
     {
         if (player == null)
         {
-            player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+            player = GameObject.Find("Player").GetComponent<Player_Controler>();
         }
         if(healthPoints > 0)
         {
