@@ -14,7 +14,7 @@ public class Shop : MonoBehaviour
     int startHpPrice, startDmgPrice, startKeyPrice;
     void Start()
     {
-        player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+        player = GameObject.Find("Player").GetComponent<Player_Controler>();
         SetPrices();
         UpdateUI();
         startDmgPrice = DmgPrice;
@@ -26,12 +26,16 @@ public class Shop : MonoBehaviour
     {
         if (player == null)
         {
+<<<<<<< HEAD
             player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
             if (player.MaxHealthPoints == 6)
             {
                 HP_UP.SetActive(false);
             }
             UpdateUI();
+=======
+            player = GameObject.Find("Player").GetComponent<Player_Controler>();
+>>>>>>> parent of 659a430 (Singleton, Qol)
         }
     }
 
