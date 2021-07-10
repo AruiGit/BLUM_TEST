@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
+    //Movement
     [SerializeField] Transform[] patrolPoints;
     int currentPatrolPoint = 0;
     protected float finishDistance = 0.5f;
@@ -31,6 +33,9 @@ public class Enemy : MonoBehaviour
     protected bool playerSeen = false;
     protected Player_Controler player;
 
+    //UI
+    [SerializeField]protected Slider hpBar;
+
     protected virtual void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
@@ -38,13 +43,15 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         dyingSound = GetComponent<AudioSource>();
         enemyColliders = GetComponents<Collider2D>();
-        player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+        hpBar.maxValue = healthPoints;
+        hpBar.value = healthPoints;
     }
     protected virtual void Update()
     {
         if (player == null)
         {
-            player = GameObject.Find("Player").GetComponent<Player_Controler>();
+            player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
         }
         if(healthPoints > 0)
         {
@@ -106,6 +113,7 @@ public class Enemy : MonoBehaviour
             healthPoints -= value;
             rb.AddForce(new Vector2(250 * direction, 0));
             enemyAnimator.SetTrigger("isHit");
+            hpBar.value = healthPoints;
             StartCoroutine(TakeDamage());
         }
     }
@@ -133,7 +141,6 @@ public class Enemy : MonoBehaviour
             Instantiate(hearthPrefab, transform.position, Quaternion.identity);
         }
     }
-
     public void PlayerDetection(bool value, Player_Controler player)
     {
         playerSeen = value;

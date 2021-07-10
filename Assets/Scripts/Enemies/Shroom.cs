@@ -11,6 +11,7 @@ public class Shroom : Enemy
         {
             canTakeDamage = false;
             healthPoints -= value;
+            hpBar.value = healthPoints;
             enemyAnimator.SetTrigger("isCrushed");
             StartCoroutine(TakeDamage());
         }

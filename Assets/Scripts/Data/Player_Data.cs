@@ -13,6 +13,8 @@ public class Player_Data
     public float[] position;
     public int keys;
     public int sceneID;
+    public int keysBought;
+    public int dmgUpBought;
 
     public Player_Data(Player_Controler player)
     {
@@ -27,5 +29,7 @@ public class Player_Data
         position[2] = player.GetPlayerPosition().z;
         sceneID = player.GetActiveSceneID();
         keys = player.SecretKeys;
+        dmgUpBought = player.DmgUPBought;
+        keysBought = player.KeysBought;
     }
 }

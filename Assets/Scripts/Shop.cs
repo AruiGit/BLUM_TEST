@@ -8,33 +8,34 @@ public class Shop : MonoBehaviour
     Player_Controler player;
     [SerializeField] GameObject HP_UP, Secret_Key, DMG_UP;
     [SerializeField] Text HpPriceText, KeyPriceText, DmgPriceText;
-    int HpPrice = 10;
-    int DmgPrice = 20;
-    int KeyPrice = 1;
-    int startHpPrice, startDmgPrice, startKeyPrice;
+    int hpPrice;
+    int dmgPrice;
+    int keyPrice ;
+    int startHpPrice = 10;
+    int startDmgPrice = 20;
+    int startKeyPrice = 1;
     void Start()
     {
-        player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        hpPrice = startHpPrice;
+        dmgPrice = startDmgPrice;
+        keyPrice = startKeyPrice;
+        player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
         SetPrices();
-        UpdateUI();
-        startDmgPrice = DmgPrice;
-        startHpPrice = HpPrice;
-        startKeyPrice = KeyPrice;
     }
 
     private void Update()
     {
         if (player == null)
         {
-<<<<<<< HEAD
-            player = GameObject.Find("Player").GetComponent<Player_Controler>();
-=======
             player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
->>>>>>> parent of e66e14e (Save/Load)
+        }
+        if (player.MaxHealthPoints == 6)
+        {
+            HP_UP.SetActive(false);
         }
     }
 
-    void SetPrices()
+    public void SetPrices()
     {
         if (player.MaxHealthPoints > 3)
         {
@@ -44,28 +45,29 @@ public class Shop : MonoBehaviour
             }
             for (int i = 3; i < player.MaxHealthPoints; i++)
             {
-                HpPrice = PriceUpdate(HpPrice);
+                hpPrice = PriceUpdate(hpPrice);
             }
         }
 
-        for(int i = 1; i < player.Damage; i++)
+        for(int i = 1; i < player.DmgUPBought; i++)
         {
-            DmgPrice = PriceUpdate(DmgPrice);
+            dmgPrice = PriceUpdate(dmgPrice);
         }
 
-        for(int i = 0; i < player.SecretKeys; i++)
+        for(int i = 0; i < player.KeysBought; i++)
         {
-            KeyPrice = PriceUpdate(KeyPrice);
+            keyPrice = PriceUpdate(keyPrice);
         }
+        UpdateUI();
     }
 
     public void BuyHPUp()
     {
-        if (player.Coins >= HpPrice)
+        if (player.Coins >= hpPrice)
         {
-            player.Coins = -HpPrice;
+            player.Coins = -hpPrice;
             player.MaxHealthPoints = 1;
-            HpPrice= PriceUpdate(HpPrice);
+            hpPrice= PriceUpdate(hpPrice);
             if (player.MaxHealthPoints == 6)
             {
                 HP_UP.SetActive(false);
@@ -76,22 +78,25 @@ public class Shop : MonoBehaviour
     }
     public void BuySecretKey()
     {
-        if (player.Coins >= KeyPrice)
+        if (player.Coins >= keyPrice)
         {
-            player.Coins = -KeyPrice;
+            player.Coins = -keyPrice;
             player.SecretKeys = 1;
-            KeyPrice=PriceUpdate(KeyPrice);
+            player.KeysBought += 1;
+            Debug.Log(player.KeysBought);
+            keyPrice=PriceUpdate(keyPrice);
 
             UpdateUI();
         }
     }
     public void BuyDamageUP()
     {
-        if (player.Coins >= DmgPrice)
+        if (player.Coins >=dmgPrice)
         {
-            player.Coins = -DmgPrice;
+            player.Coins = -dmgPrice;
             player.Damage = 1;
-            DmgPrice = PriceUpdate(DmgPrice);
+            player.DmgUPBought += 1;
+            dmgPrice = PriceUpdate(dmgPrice);
 
             UpdateUI();
         }
@@ -111,16 +116,16 @@ public class Shop : MonoBehaviour
     }
     public void ResetShop()
     {
-        KeyPrice = startKeyPrice;
-        DmgPrice = startDmgPrice;
-        HpPrice = startHpPrice;
+        keyPrice = startKeyPrice;
+        dmgPrice = startDmgPrice;
+        hpPrice = startHpPrice;
         HP_UP.SetActive(true);
         UpdateUI();
     }
     void UpdateUI()
     {
-        HpPriceText.text = "Max Health UP  Price: " + HpPrice;
-        KeyPriceText.text = "Secret Key  Price: " + KeyPrice;
-        DmgPriceText.text = "DMG UP  Price: " + DmgPrice;
+        HpPriceText.text = "Max Health UP  Price: " + hpPrice;
+        KeyPriceText.text = "Secret Key  Price: " + keyPrice;
+        DmgPriceText.text = "DMG UP  Price: " + dmgPrice;
     }
 }

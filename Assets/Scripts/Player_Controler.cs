@@ -5,8 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class Player_Controler : MonoBehaviour
 {
-    bool isDead = false;
+
     private static Player_Controler playerInstance;
+    Player_Data data;
 
     //Sprite and animations
     [SerializeField]SpriteRenderer sprite;
@@ -34,7 +35,7 @@ public class Player_Controler : MonoBehaviour
 
     //Stats
     [SerializeField]int healthPoints = 3;
-    int maxHealthPoints;
+    public int maxHealthPoints;
     int money = 540;
     int damage = 1;
 
@@ -46,9 +47,11 @@ public class Player_Controler : MonoBehaviour
     bool damageDealt = false;
     AudioSource attackSound;
 
-    //TakingDamage
+    //TakingDamage and Death
     bool canTakeDamage = true;
     bool isColliding = false;
+    bool isDead = false;
+    IEnumerator death;
 
     //Envo
     int secretKeys = 0;
@@ -57,9 +60,12 @@ public class Player_Controler : MonoBehaviour
     //Unlocks
     bool isDashUnlocked = true;
 
+    //Shop Info
+    int keysBought = 0;
+    int dmgUpBought = 0;
+
     void Awake()
     {
-        Debug.Log("im alive!");
         if (playerInstance == null)
         {
             playerInstance = this;
@@ -76,10 +82,11 @@ public class Player_Controler : MonoBehaviour
         maxHealthPoints = healthPoints;
         attackSound = GetComponent<AudioSource>();
         collider = GetComponent<Collider2D>();
+        GameObject_Manager.instance.player = this.gameObject;
     }
     void Update()
     {
-        if (SceneManager.GetActiveScene().buildIndex == 1)
+        if (SceneManager.GetActiveScene().buildIndex == 0)
         {
             gameObject.SetActive(false);
         }
@@ -89,11 +96,11 @@ public class Player_Controler : MonoBehaviour
         }
         if (camera == null)
         {
-<<<<<<< HEAD
-            camera = GameObject.Find("Main Camera").GetComponent<Camera_Movement>();
-=======
             camera = GameObject_Manager.instance.camera.GetComponent<Camera_Movement>();
->>>>>>> parent of e66e14e (Save/Load)
+        }
+        if (GameObject_Manager.instance.player == null)
+        {
+            GameObject_Manager.instance.player = this.gameObject;
         }
 
         if (isDead == false)
@@ -106,9 +113,14 @@ public class Player_Controler : MonoBehaviour
 
         if (healthPoints <= 0)
         {
+            if (isDead == true)
+            {
+                return;
+            }
             isDead = true;
-            playerAnimator.SetBool("isDead 0",true);
-            StartCoroutine(deathTimer());
+            playerAnimator.SetBool("isDead",true);
+            death = deathTimer();
+            StartCoroutine(death);
             collider.enabled = false;
             rb.gravityScale = 0;
         }
@@ -219,7 +231,7 @@ public class Player_Controler : MonoBehaviour
                 {
                     jumpFadeSpriteRotation.Set(0, 0, 0, 1);
                 }
-                StartCoroutine(SpawnDashFade(transform.position));
+                StartCoroutine(SpawnDashFade(transform.position,dir));
 
                 gameObject.transform.Translate(new Vector2(dashLenght * dir, 0));
                 rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y / 2);
@@ -356,6 +368,7 @@ public class Player_Controler : MonoBehaviour
     public void DestroyPlayer()
     {
         Destroy(gameObject);
+        playerInstance = null;
     }
     #region Properties
     public int SecretKeys
@@ -448,16 +461,37 @@ public class Player_Controler : MonoBehaviour
     {
         return SceneManager.GetActiveScene().buildIndex;
     }
+    public int KeysBought
+    {
+        get
+        {
+            return keysBought;
+        }
+        set
+        {
+            keysBought = value;
+        }
+    }
+    public int DmgUPBought
+    {
+        get
+        {
+            return dmgUpBought;
+        }
+        set
+        {
+            dmgUpBought = value;
+        }
+    }
     #endregion
     #region Save/Load
     public void SavePlayer()
     {
         Save_System.SavePlayer(this);
     }
-
     public void LoadPlayer()
     {
-        Player_Data data = Save_System.LoadPlayer();
+        data = Save_System.LoadPlayer();
 
         money = data.money;
         healthPoints = data.health;
@@ -466,10 +500,27 @@ public class Player_Controler : MonoBehaviour
         secretKeys = data.keys;
         transform.position = new Vector3(data.position[0], data.position[1], data.position[2]);
         isDashUnlocked = data.isDashUnlocked;
+        KeysBought = data.keysBought;
+        DmgUPBought = data.dmgUpBought;
         SceneManager.LoadScene(data.sceneID);
         this.enabled = true;
     }
+    public void RespawnPlayer()
+    {
+        StopCoroutine(death);
+        LoadPlayer();
+        playerAnimator.SetBool("isDead", false);
+        isDead = false;
+        collider.enabled = true;
+        rb.gravityScale = 1;
+        sprite.enabled = true;
+        isColliding = false;
+        isPreparingToJump = false;
+        rb.velocity = new Vector2(0, 0);
+        transform.position = new Vector3(data.position[0], data.position[1], data.position[2]);
+    }
     #endregion
+    #region IEnumarators
     IEnumerator TakeDamage()
     {
         yield return new WaitForSeconds(0.5f);
@@ -485,8 +536,9 @@ public class Player_Controler : MonoBehaviour
     }
     IEnumerator deathTimer()
     {
-        yield return new WaitForSeconds(0.517f);
-        sprite.enabled = false;
+         yield return new WaitForSeconds(0.517f);
+         sprite.enabled = false;
+         Debug.Log("wylaczam srpite");
     }
     IEnumerator dashCooldown()
     {
@@ -498,17 +550,18 @@ public class Player_Controler : MonoBehaviour
         yield return new WaitForSeconds(time);
         isColliding = false;
     }
-    IEnumerator SpawnDashFade(Vector3 tempPlayerPos)
+    IEnumerator SpawnDashFade(Vector3 tempPlayerPos, int tempDir)
     {
         yield return new WaitForSeconds(0.05f);
         Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x, tempPlayerPos.y), jumpFadeSpriteRotation);
         yield return new WaitForSeconds(0.05f);
-        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght / 4 * dir, tempPlayerPos.y), jumpFadeSpriteRotation);
+        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght / 4 * tempDir, tempPlayerPos.y), jumpFadeSpriteRotation);
         yield return new WaitForSeconds(0.05f);
-        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght * 2 / 4 * dir, tempPlayerPos.y), jumpFadeSpriteRotation);
+        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght * 2 / 4 * tempDir, tempPlayerPos.y), jumpFadeSpriteRotation);
         yield return new WaitForSeconds(0.05f);
-        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght * 3 / 4 * dir, tempPlayerPos.y), jumpFadeSpriteRotation);
+        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght * 3 / 4 * tempDir, tempPlayerPos.y), jumpFadeSpriteRotation);
         yield return new WaitForSeconds(0.05f);
-        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght * dir, tempPlayerPos.y), jumpFadeSpriteRotation);
+        Instantiate(jumpFadeSprite, new Vector2(tempPlayerPos.x + dashLenght * tempDir, tempPlayerPos.y), jumpFadeSpriteRotation);
     }
+    #endregion
 }

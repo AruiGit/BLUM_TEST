@@ -24,7 +24,7 @@ public class Game_Manager : MonoBehaviour
     [SerializeField] GameObject pauseMenu;
     bool isMenuOpened = false;
 
-    private static Game_Manager gameManagerInstance;
+   public static Game_Manager gameManagerInstance;
 
     void Awake()
     {
@@ -47,17 +47,13 @@ public class Game_Manager : MonoBehaviour
         {
             healthBars[i].enabled = false;
         }
-        currentPlayer = GameObject.Find("Player").GetComponent<Player_Controler>();
-       
-        
+        currentPlayer = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+        GameObject_Manager.instance.gameManager = this.gameObject;
     }
     void Update()
     {
-        if (currentPlayer==null)
-        {
-            currentPlayer = GameObject.Find("Player").GetComponent<Player_Controler>();
-        }
-        if (SceneManager.GetActiveScene().buildIndex == 1)
+        CheckNulls();
+        if (SceneManager.GetActiveScene().buildIndex == 0)
         {
             Destroy(gameObject);
         }
@@ -72,10 +68,19 @@ public class Game_Manager : MonoBehaviour
             restartGame.enabled = true;
             if (Input.GetKeyDown(KeyCode.R))
             {
-                currentPlayer.DestroyPlayer();
-                Instantiate(playerPrefab);
-                ReloadUI();
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                if (Save_System.CheckSave() == true)
+                {
+                    currentPlayer.RespawnPlayer();
+                    ReloadUI();
+                    shop.GetComponent<Shop>().SetPrices();
+                }
+                else
+                {
+                    currentPlayer.DestroyPlayer();
+                    Instantiate(playerPrefab);
+                    ReloadUI();
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                }
             }
         }
         else
@@ -84,6 +89,23 @@ public class Game_Manager : MonoBehaviour
         }
     }
 
+    void CheckNulls()
+    {
+        if (currentPlayer == null)
+        {
+            currentPlayer = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+        }
+        if (GameObject_Manager.instance.gameManager == null)
+        {
+            GameObject_Manager.instance.gameManager = this.gameObject;
+        }
+    }
+    private void OnDestroy()
+    {
+        GameObject_Manager.instance.gameManager = null;
+        Debug.Log("Destroing game manager");
+    }
+    #region UI
     void CoinUiUpdate()
     {
         cointText.text = "Coins: " + currentPlayer.Coins;
@@ -132,6 +154,8 @@ public class Game_Manager : MonoBehaviour
             pauseMenu.SetActive(isMenuOpened);
         }
     }
+    #endregion
+    #region Menu
     public void SavePlayer()
     {
         currentPlayer.SavePlayer();
@@ -140,6 +164,7 @@ public class Game_Manager : MonoBehaviour
     {
         Application.Quit();
     }
+    #endregion
     public void GetPlayer(Player_Controler player)
     {
         currentPlayer = player;

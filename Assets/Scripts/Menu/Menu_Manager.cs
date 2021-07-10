@@ -12,7 +12,7 @@ public class Menu_Manager : MonoBehaviour
 
     private void Start()
     {
-        async = SceneManager.LoadSceneAsync(0);
+        async = SceneManager.LoadSceneAsync(1);
         async.allowSceneActivation = false;
 
         player = GameObject.Find("Player").GetComponent<Player_Controler>();

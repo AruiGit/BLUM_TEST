@@ -8,15 +8,16 @@ public class Camera_Movement : MonoBehaviour
     Vector2 offset;
     void Start()
     {
-        targetPosition = GameObject.Find("Player").GetComponent<Transform>();
+        targetPosition =GameObject_Manager.instance.player.GetComponent<Transform>();
         offset = new Vector2(0, 0);
+        GameObject_Manager.instance.camera = this.gameObject;
     }
 
     void Update()
     {
         if (targetPosition == null)
         {
-            targetPosition = GameObject.Find("Player").GetComponent<Transform>();
+            targetPosition = GameObject_Manager.instance.player.GetComponent<Transform>();
         }
 
         Vector2 smoothPosition = Vector2.Lerp((Vector2)transform.position, (Vector2)targetPosition.position, cameraSpeed * Time.deltaTime);

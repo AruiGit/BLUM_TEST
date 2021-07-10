@@ -35,4 +35,17 @@ public static class Save_System
         }
     }
 
+    public static bool CheckSave()
+    {
+        string path = Application.persistentDataPath + "/save.save";
+        if (File.Exists(path)== true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 }
