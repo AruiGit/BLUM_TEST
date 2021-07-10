@@ -39,7 +39,11 @@ public class Death_Bringer : Enemy
     {
         if (player == null)
         {
+<<<<<<< HEAD
             player = GameObject.Find("Player").GetComponent<Player_Controler>();
+=======
+           player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+>>>>>>> parent of e66e14e (Save/Load)
         }
         UpdateUI();
         if (healthPoints > 0 && playerSeen == false)

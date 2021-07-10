@@ -26,7 +26,11 @@ public class Shop : MonoBehaviour
     {
         if (player == null)
         {
+<<<<<<< HEAD
             player = GameObject.Find("Player").GetComponent<Player_Controler>();
+=======
+            player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+>>>>>>> parent of e66e14e (Save/Load)
         }
     }
 

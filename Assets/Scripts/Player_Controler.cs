@@ -89,7 +89,11 @@ public class Player_Controler : MonoBehaviour
         }
         if (camera == null)
         {
+<<<<<<< HEAD
             camera = GameObject.Find("Main Camera").GetComponent<Camera_Movement>();
+=======
+            camera = GameObject_Manager.instance.camera.GetComponent<Camera_Movement>();
+>>>>>>> parent of e66e14e (Save/Load)
         }
 
         if (isDead == false)
