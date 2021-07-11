@@ -13,6 +13,7 @@ TagManager:
   - Doors
   - Death_Bringer
   - Spell
+  - Evil_Wizard
   layers:
   - Default
   - TransparentFX

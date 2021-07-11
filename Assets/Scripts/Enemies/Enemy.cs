@@ -105,7 +105,7 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-    public void TakeDamage(int value, int direction)
+    public virtual void TakeDamage(int value, int direction)
     {
         if (canTakeDamage == true)
         {

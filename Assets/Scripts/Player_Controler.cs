@@ -260,6 +260,11 @@ public class Player_Controler : MonoBehaviour
                     damageDealt = true;
                     enemy.gameObject.GetComponent<Death_Bringer>().TakeDamage(damage, dir);
                 }
+                else if (enemy.CompareTag("Evil_Wizard") && damageDealt == false)
+                {
+                    damageDealt = true;
+                    enemy.gameObject.GetComponent<Evil_Wizard>().TakeDamage(damage, dir);
+                }
                 else if (damageDealt == false)
                 {
                     damageDealt = true;
