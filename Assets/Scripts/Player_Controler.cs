@@ -352,8 +352,7 @@ public class Player_Controler : MonoBehaviour
         }
         if(collision.gameObject.CompareTag("Spike"))
         {
-            HealthPoints = -1;
-            isColliding = true;
+            HealthPoints = -6;
         }
     }
     public void ChangeCollision()
