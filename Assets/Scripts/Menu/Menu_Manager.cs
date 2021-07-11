@@ -8,6 +8,7 @@ public class Menu_Manager : MonoBehaviour
     public Animator anim;
     AsyncOperation async;
     Player_Controler player;
+    [SerializeField] AudioSource menuClickSound;
 
 
     private void Start()
@@ -22,6 +23,7 @@ public class Menu_Manager : MonoBehaviour
     {
         StartCoroutine(AnimationTime());
         anim.SetTrigger("playSelected");
+        menuClickSound.Play();
     }
 
     public void OverPlayButton()
@@ -37,11 +39,13 @@ public class Menu_Manager : MonoBehaviour
     public void LoadGame()
     {
         Debug.Log("Tutaj za³aduje gre");
+        menuClickSound.Play();
         player.LoadPlayer();
     }
 
     public void ExitGame()
     {
+        menuClickSound.Play();
         Application.Quit();
     }
 

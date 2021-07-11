@@ -23,6 +23,7 @@ public class Game_Manager : MonoBehaviour
     //Menu
     [SerializeField] GameObject pauseMenu;
     bool isMenuOpened = false;
+    [SerializeField] AudioSource menuClickSound;
 
    public static Game_Manager gameManagerInstance;
 
@@ -159,10 +160,12 @@ public class Game_Manager : MonoBehaviour
     public void SavePlayer()
     {
         currentPlayer.SavePlayer();
+        menuClickSound.Play();
     }
     public void ExitGame()
     {
         Application.Quit();
+        menuClickSound.Play();
     }
     #endregion
     public void GetPlayer(Player_Controler player)

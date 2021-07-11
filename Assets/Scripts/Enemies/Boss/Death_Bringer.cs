@@ -22,6 +22,8 @@ public class Death_Bringer : Enemy
     [SerializeField] Slider staminaSlider;
     [SerializeField] Boss_Area bossArea;
 
+
+
     protected override void Start()
     {
         sprite = GetComponentInChildren<SpriteRenderer>();

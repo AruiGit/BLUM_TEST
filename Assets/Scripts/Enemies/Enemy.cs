@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour
     protected bool canTakeDamage = true;
 
     protected bool isPlaying = false;
-    protected AudioSource dyingSound;
+    [SerializeField]protected AudioSource dyingSound;
     protected Collider2D[] enemyColliders;
 
     protected SpriteRenderer sprite;
