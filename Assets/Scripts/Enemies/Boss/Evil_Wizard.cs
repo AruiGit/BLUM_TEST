@@ -24,6 +24,7 @@ public class Evil_Wizard : Enemy
     bool isCasting = false;
     public bool isHit = false;
     bool canShoot = true;
+    float fireballCooldown = 5f;
 
 
     protected override void Start()
@@ -41,7 +42,6 @@ public class Evil_Wizard : Enemy
         ShuffleList();
         chargeAttackSlider.maxValue = chargeTime;
     }
-
     protected override void Update()
     {
         if (playerSeen == false)
@@ -50,11 +50,14 @@ public class Evil_Wizard : Enemy
         }
         NormalAttack();
         UpdateFlip();
+        CheckPlayerDistance();
+        Debug.Log(Vector2.Distance(transform.position, player.transform.position));
 
         if (healthPoints <= 0)
         {
             if (isPlaying == false)
             {
+                bossArea.BossDead();
                 enemyAnimator.SetTrigger("isDead");
                 isPlaying = true;
                 dyingSound.Play();
@@ -69,9 +72,10 @@ public class Evil_Wizard : Enemy
             StartCoroutine(DeathTimer(0.8f));
         }
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+
+    void CheckPlayerDistance()
     {
-        if (collision.gameObject.CompareTag("Player") && isCloneAttackOnCooldown == false)
+        if (Vector2.Distance(transform.position, player.transform.position) < 5 && isCloneAttackOnCooldown == false && isCasting == false)
         {
             isCloneAttackOnCooldown = true;
             enemyAnimator.SetTrigger("startingCast");
@@ -116,7 +120,8 @@ public class Evil_Wizard : Enemy
         if (Mathf.Abs(player.transform.position.x - transform.position.x) < 7f && Mathf.Abs(player.transform.position.y - transform.position.y) < 1.5f && isCasting == false && canShoot==true)
         {
             canShoot = false;
-            StartCoroutine(CastSingleFireBall(0.5f));
+            isCasting = true;
+            StartCoroutine(CastSingleFireBall(0.5f, fireballCooldown));
             enemyAnimator.SetTrigger("isAttacking");
         }
     }
@@ -152,6 +157,7 @@ public class Evil_Wizard : Enemy
         ShuffleList();
     }
 
+    #region IEnumerators
     IEnumerator CharginAttack(float chargeTime)
     {
         
@@ -181,10 +187,13 @@ public class Evil_Wizard : Enemy
         yield return new WaitForSeconds(0.5f);
         isHit = false;
     }
-    IEnumerator CastSingleFireBall(float animationTime)
+    IEnumerator CastSingleFireBall(float animationTime, float fireballCooldown)
     {
         yield return new WaitForSeconds(animationTime);
         Instantiate(fireBallPrefab, attackPosition.position, Quaternion.identity);
+        isCasting = false;
+        yield return new WaitForSeconds(fireballCooldown);
         canShoot = true;
     }
+    #endregion
 }

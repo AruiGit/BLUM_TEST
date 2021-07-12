@@ -7,11 +7,13 @@ public class Evil_Wizard_Clone : MonoBehaviour
     public SpriteRenderer sprite;
     GameObject player;
     [SerializeField] Evil_Wizard father;
+    Animator cloneAnim;
     void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
         sprite.enabled = false;
         player = GameObject_Manager.instance.player;
+        cloneAnim = GetComponent<Animator>();
     }
 
     private void Update()
@@ -42,8 +44,8 @@ public class Evil_Wizard_Clone : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Player is touching me");
-            sprite.enabled = false;
+            cloneAnim.SetTrigger("isDead");
+            StartCoroutine(LifeTime(0.8f));
         }
     }
     public void Life(float lifeTime)

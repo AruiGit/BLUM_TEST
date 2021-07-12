@@ -185,7 +185,7 @@ public class Player_Controler : MonoBehaviour
 
             if (Input.GetKey(KeyCode.Space))
             {
-                jumpHight += 10 * Time.deltaTime;
+                jumpHight += 15 * Time.deltaTime;
                 jumpHight = Mathf.Clamp(jumpHight, minimumJumpHight, maxJumpHight);
                 playerAnimator.SetTrigger("prepToJump");
                 isPreparingToJump = true;
