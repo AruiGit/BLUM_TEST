@@ -38,6 +38,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7334317007578768378}
     m_Modifications:
+    - target: {fileID: 2255122228689185998, guid: 4774254e7d84dd544a09d470e1f4abab, type: 3}
+      propertyPath: father
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5935039317186926407, guid: 4774254e7d84dd544a09d470e1f4abab, type: 3}
       propertyPath: m_Name
       value: Wizard_Clone_Spawn_Point

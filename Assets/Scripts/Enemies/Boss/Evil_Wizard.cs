@@ -15,16 +15,22 @@ public class Evil_Wizard : Enemy
     [SerializeField] GameObject cloneSpawnPointsParent;
     [SerializeField] GameObject fireBallPrefab;
     [SerializeField] List<Transform> fireBallSpawnPositions = new List<Transform>();
+    [SerializeField] Transform attackPosition;
     int clonesNumber = 5;
     IEnumerator chargedAttack;
     float chargeTime = 10f;
     float cloneCooldown = 20f;
     bool isCloneAttackOnCooldown = false;
     bool isCasting = false;
+    public bool isHit = false;
+    bool canShoot = true;
+
 
     protected override void Start()
     {
         player = GameObject_Manager.instance.player.GetComponent<Player_Controler>();
+        sprite = GetComponentInChildren<SpriteRenderer>();
+        rb = GetComponent<Rigidbody2D>();
         enemyAnimator = GetComponentInChildren<Animator>();
         hpBar.maxValue = healthPoints;
         hpBar.value = healthPoints;
@@ -43,20 +49,40 @@ public class Evil_Wizard : Enemy
             return;
         }
         NormalAttack();
+        UpdateFlip();
+
+        if (healthPoints <= 0)
+        {
+            if (isPlaying == false)
+            {
+                enemyAnimator.SetTrigger("isDead");
+                isPlaying = true;
+                dyingSound.Play();
+                rb.gravityScale = 0;
+                foreach (Collider2D col in enemyColliders)
+                {
+                    col.enabled = false;
+                }
+            }
+            rb.velocity = new Vector2(0, 0);
+
+            StartCoroutine(DeathTimer(0.8f));
+        }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player") && isCloneAttackOnCooldown == false)
         {
             isCloneAttackOnCooldown = true;
-            CloneAttack();
+            enemyAnimator.SetTrigger("startingCast");
+            enemyAnimator.SetBool("isCasting", true);
+            StartCoroutine(WaitForAnimationEnd(0.40f));
             StartCoroutine(CloneCooldown(cloneCooldown));
         }
     }
     void CloneAttack()
     {
         transform.position = cloneSpawnPoints[0].transform.position;
-        enemyAnimator.SetTrigger("startingCast");
         for(int i = 1; i <= clonesNumber; i++)
         {
             cloneSpawnPoints[i].GetComponentInChildren<Evil_Wizard_Clone>().sprite.enabled = true;
@@ -87,13 +113,25 @@ public class Evil_Wizard : Enemy
     }
     void NormalAttack()
     {
-        if(Mathf.Abs(player.transform.position.x - transform.position.x) < 3 && player.transform.position.y - transform.position.y < 3 && isCasting == false)
+        if (Mathf.Abs(player.transform.position.x - transform.position.x) < 7f && Mathf.Abs(player.transform.position.y - transform.position.y) < 1.5f && isCasting == false && canShoot==true)
         {
-            enemyAnimator.SetFloat("direction", player.transform.position.x - transform.position.x);
+            canShoot = false;
+            StartCoroutine(CastSingleFireBall(0.5f));
             enemyAnimator.SetTrigger("isAttacking");
         }
     }
-
+    void UpdateFlip()
+    {
+        enemyAnimator.SetFloat("direction", player.transform.position.x - transform.position.x);
+        if (player.transform.position.x - transform.position.x < 0)
+        {
+            sprite.flipX = true;
+        }
+        else
+        {
+            sprite.flipX = false;
+        }
+    }
     public override void TakeDamage(int value, int direction)
     {
         if (canTakeDamage == true)
@@ -103,6 +141,8 @@ public class Evil_Wizard : Enemy
             enemyAnimator.SetTrigger("isHit");
             hpBar.value = healthPoints;
             StartCoroutine(TakeDamage());
+            isHit = true;
+            StartCoroutine(Hitted());
         }
         enemyAnimator.SetBool("isCasting", false);
         StopCoroutine(chargedAttack);
@@ -114,7 +154,7 @@ public class Evil_Wizard : Enemy
 
     IEnumerator CharginAttack(float chargeTime)
     {
-        enemyAnimator.SetBool("isCasting", true);
+        
         for (float t = 0.0f; t <= chargeTime+0.1f; t += Time.deltaTime)
         {
             chargeAttackSlider.value = t;
@@ -130,5 +170,21 @@ public class Evil_Wizard : Enemy
     {
         yield return new WaitForSeconds(cooldownTime);
         isCloneAttackOnCooldown = false;
+    }
+    IEnumerator WaitForAnimationEnd(float animationTime)
+    {
+        yield return new WaitForSeconds(animationTime);
+        CloneAttack();
+    }
+    IEnumerator Hitted()
+    {
+        yield return new WaitForSeconds(0.5f);
+        isHit = false;
+    }
+    IEnumerator CastSingleFireBall(float animationTime)
+    {
+        yield return new WaitForSeconds(animationTime);
+        Instantiate(fireBallPrefab, attackPosition.position, Quaternion.identity);
+        canShoot = true;
     }
 }

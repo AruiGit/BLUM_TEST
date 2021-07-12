@@ -137,6 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sprite: {fileID: 0}
+  father: {fileID: 7410462263419331043, guid: dc2f6415a451605488e4306eed31ce5e, type: 3}
 --- !u!95 &-1454855826109689674
 Animator:
   serializedVersion: 3
